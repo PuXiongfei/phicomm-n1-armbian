@@ -59,20 +59,17 @@ jobs:
         id: build
         run: |
           cd build
-          ls -la
           echo "::set-output name=status::success"
 
       - name: Organize files
         id: organize
         run: |
           mkdir -p ${FILE_DATE}
-          ls -la
           cd ${FILE_DATE}
-          ls -la
           echo "UPLOAD_PATH=${PWD}" >> $GITHUB_ENV
-          [[ -d output/images ]] && sudo mv -f output/images/ ./
-          [[ -d output/debug ]] && sudo mv -f output/debug/ ./
-          ls -la
+          [[ -d ${GITHUB_WORKSPACE}/build/output/images ]] && sudo mv -f output/images/ ./
+          [[ -d ${GITHUB_WORKSPACE}/build/output/debug ]] && sudo mv -f output/debug/ ./
+          ls -laR
           echo "::set-output name=status::success"
 
       - name: Upload output
