@@ -27,12 +27,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Docker
+      - name: Init
         run: |
           sudo timedatectl set-timezone "$TZ"
-          sudo apt update
-          sudo curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
       - name: Checkout Armbian build script
         uses: actions/checkout@v2
         with:
@@ -41,14 +38,14 @@ jobs:
           path: build
           ref: master
           clean: false
-      - name: Build Armbian in Docker
+      - name: Build Armbian
         id: build
         run: |
           if [ "${{ github.event.inputs.boards }}" != "phicomm-n1" ]; then
             echo "not phicomm-n1"
           fi
           cd build
-          sudo ./compile.sh docker \
+          sudo ./compile.sh \
           BOARD=${{ github.event.inputs.boards }} \
           BRANCH=${{ github.event.inputs.branch }} \
           RELEASE=${{ github.event.inputs.release }} \
