@@ -6,7 +6,7 @@ on:
       boards:
         description: "BOARD"
         required: true
-        default: "lepotato"
+        default: "phicomm-n1"
       branch:
         description: "BRANCH"
         required: true
@@ -18,11 +18,11 @@ on:
       kernelOnly:
         description: "KERNEL_ONLY"
         required: true
-        default: "yes"
+        default: "no"
 env:
+  TZ: Asia/Shanghai
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
-  TZ: Asia/Shanghai
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -41,28 +41,47 @@ jobs:
       - name: Build Armbian
         id: build
         run: |
-          if [ "${{ github.event.inputs.boards }}" != "phicomm-n1" ]; then
-            echo "not phicomm-n1"
+          if [ "${{ github.event.inputs.boards }}" == "phicomm-n1" ]; then
+            echo "Copy phicomm-n1 files..."
+            ls -laR
+            cp -af config/ build/
+            cp -af packages/ build/
+            cp -af userpatches/ build/
+            mkdir -p build/output/images
+            echo "phicomm-n1" > build/output/images/phicomm-n1.txt
+            mkdir -p build/output/debug
+            echo "phicomm-n1" > build/output/debug/phicomm-n1.txt
           fi
+
           cd build
-          sudo ./compile.sh \
-          BOARD=${{ github.event.inputs.boards }} \
-          BRANCH=${{ github.event.inputs.branch }} \
-          RELEASE=${{ github.event.inputs.release }} \
-          KERNEL_ONLY=${{ github.event.inputs.kernelOnly }} \
-          KERNEL_CONFIGURE=no \
-          BUILD_MINIMAL=no \
-          BUILD_DESKTOP=no \
-          COMPRESS_OUTPUTIMAGE=yes
-          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+          echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+          mkdir -p ${GITHUB_WORKSPACE}/${FILE_DATE}
+          echo "UPLOAD_PATH=${GITHUB_WORKSPACE}/${FILE_DATE}" >> $GITHUB_ENV
+          ls -laR ${UPLOAD_PATH}
+          [[ -d output/images ]] && sudo mv -f output/images/ ${UPLOAD_PATH}/
+          [[ -d output/debug ]] && sudo mv -f output/debug/ ${UPLOAD_PATH}/
+
           echo "::set-output name=status::success"
-          ls -laR $GITHUB_WORKSPACE/build/output
       - name: Upload output
         uses: actions/upload-artifact@main
         if: steps.build.outputs.status == 'success'
         with:
-          name: Armbian_${{ github.event.inputs.boards }}${{ env.FILE_DATE }}
-          path: ${GITHUB_WORKSPACE}/build/output
+          name: Armbian_${{ github.event.inputs.boards }}_${{ env.FILE_DATE }}
+          path: ${{ env.UPLOAD_PATH }}
+      - name: Upload to cowtransfer
+        id: cowtransfer
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+        run: |
+          curl -fsSL git.io/file-transfer | sh ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD_PATH} 2>&1 | tee cowtransfer.log
+          echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+          echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+      - name: Upload to WeTransfer
+        id: wetransfer
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+        run: |
+          curl -fsSL git.io/file-transfer | sh ./transfer wet -s -p 16 --no-progress ${UPLOAD_PATH} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
