@@ -30,6 +30,8 @@ jobs:
       - name: Init
         run: |
           sudo timedatectl set-timezone "$TZ"
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Checkout Armbian build script
         uses: actions/checkout@v2
         with:
@@ -44,9 +46,7 @@ jobs:
           ls -la
           if [ "${{ github.event.inputs.boards }}" == "phicomm-n1" ]; then
             echo "Copy phicomm-n1 files..."
-            cp -af config/ build/
-            cp -af packages/ build/
-            cp -af userpatches/ build/
+            [[ -d phicomm-n1 ]] && cp -af phicomm-n1/* build/
             mkdir -p build/output/images
             echo "phicomm-n1" > build/output/images/phicomm-n1.txt
             mkdir -p build/output/debug
