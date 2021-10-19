@@ -21,6 +21,10 @@ on:
         description: "KERNEL_ONLY"
         required: true
         default: "no"
+      buildDesktop:
+        description: "BUILD_DESKTOP"
+        required: true
+        default: "no"
 
 env:
   TZ: Asia/Shanghai
@@ -68,7 +72,7 @@ jobs:
           KERNEL_ONLY=${{ github.event.inputs.kernelOnly }} \
           KERNEL_CONFIGURE=no \
           BUILD_MINIMAL=no \
-          BUILD_DESKTOP=no \
+          BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
           COMPRESS_OUTPUTIMAGE=yes
           echo "::set-output name=status::success"
 
@@ -86,7 +90,7 @@ jobs:
         uses: actions/upload-artifact@main
         if: steps.build.outputs.status == 'success'
         with:
-          name: Armbian_${{ github.event.inputs.boards }}_${{ env.FILE_DATE }}
+          name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
 
       - name: Upload to cowtransfer
