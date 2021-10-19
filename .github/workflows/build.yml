@@ -1,4 +1,4 @@
-name: Build N1 Armbian
+name: Build Armbian
 
 on:
   workflow_dispatch:
@@ -19,19 +19,24 @@ on:
         description: "KERNEL_ONLY"
         required: true
         default: "no"
+
 env:
   TZ: Asia/Shanghai
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Init
         run: |
           sudo timedatectl set-timezone "$TZ"
+
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Checkout Armbian build script
         uses: actions/checkout@v2
         with:
@@ -40,33 +45,43 @@ jobs:
           path: build
           ref: master
           clean: false
+
+      - name: Override file
+        run: |
+          [[ -d override ]] && echo "Copy override files..." && cp -af override/* build/
+          mkdir -p build/output/images
+          echo "phicomm-n1" > build/output/images/phicomm-n1.txt
+          mkdir -p build/output/debug
+          echo "phicomm-n1" > build/output/debug/phicomm-n1.txt
+          echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+
       - name: Build Armbian
         id: build
         run: |
-          if [ "${{ github.event.inputs.boards }}" == "phicomm-n1" ]; then
-            [[ -d phicomm-n1 ]] && echo "Copy phicomm-n1 files..." && cp -af phicomm-n1/* build/
-            mkdir -p build/output/images
-            echo "phicomm-n1" > build/output/images/phicomm-n1.txt
-            mkdir -p build/output/debug
-            echo "phicomm-n1" > build/output/debug/phicomm-n1.txt
-          fi
-
           cd build
-          echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-          mkdir -p ${GITHUB_WORKSPACE}/${FILE_DATE}
-          echo "UPLOAD_PATH=${GITHUB_WORKSPACE}/${FILE_DATE}" >> $GITHUB_ENV
-          ls -la ${UPLOAD_PATH}
-          [[ -d output/images ]] && sudo mv -f output/images/ ${UPLOAD_PATH}/
-          [[ -d output/debug ]] && sudo mv -f output/debug/ ${UPLOAD_PATH}/
-          ls -la ${UPLOAD_PATH}
-
+          ls -la
           echo "::set-output name=status::success"
+
+      - name: Organize files
+        id: organize
+        run: |
+          mkdir -p ${FILE_DATE}
+          ls -la
+          cd ${FILE_DATE}
+          ls -la
+          echo "UPLOAD_PATH=${PWD}" >> $GITHUB_ENV
+          [[ -d output/images ]] && sudo mv -f output/images/ ./
+          [[ -d output/debug ]] && sudo mv -f output/debug/ ./
+          ls -la
+          echo "::set-output name=status::success"
+
       - name: Upload output
         uses: actions/upload-artifact@main
         if: steps.build.outputs.status == 'success'
         with:
           name: Armbian_${{ github.event.inputs.boards }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
+
       - name: Upload to cowtransfer
         id: cowtransfer
         if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
@@ -74,6 +89,7 @@ jobs:
           curl -fsSL git.io/file-transfer | sh ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD_PATH} 2>&1 | tee cowtransfer.log
           echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
           echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+
       - name: Upload to WeTransfer
         id: wetransfer
         if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
@@ -81,6 +97,7 @@ jobs:
           curl -fsSL git.io/file-transfer | sh ./transfer wet -s -p 16 --no-progress ${UPLOAD_PATH} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
