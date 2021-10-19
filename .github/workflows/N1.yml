@@ -4,26 +4,26 @@ on:
   workflow_dispatch:
     inputs:
       boards:
-        description: "Comma delimited list"
+        description: "BOARD"
         required: true
-        default: "phicomm-n1"
-
-      repository:
-        description: "Packages from repository"
-        required: true
-        default: "yes"
-
+        default: "lepotato"
 env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   TZ: Asia/Shanghai
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Install Docker
+        id: install
+        run: |
+          sudo timedatectl set-timezone "$TZ"
+          sudo apt update
+          sudo curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
       - name: Checkout Armbian build script
+        id: checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -31,10 +31,21 @@ jobs:
           path: build
           ref: master
           clean: false
-      - name: Build beta images
-        env:
-          REBUILD_IMAGES: ${{ github.event.inputs.boards }}
-          REPOSITORY: ${{ github.event.inputs.repository }}
+      - name: Build Armbian in Docker
+        id: build
+        if: steps.install.outputs.status == 'success' && steps.checkout.outputs.status == 'success'
         run: |
           cd build
-          ./compile.sh
+          sudo ./compile.sh docker BOARD=${{ github.event.inputs.boards }} BRANCH=current RELEASE=bullseye KERNEL_ONLY=yes KERNEL_CONFIGURE=no BUILD_MINIMAL=no BUILD_DESKTOP=no COMPRESS_OUTPUTIMAGE=yes
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+      - name: Upload Output
+        uses: actions/upload-artifact@main
+        if: steps.build.outputs.status == 'success'
+        with:
+          name: Armbian_${{ github.event.inputs.boards }}${{ env.FILE_DATE }}
+          path: $GITHUB_WORKSPACE/Output
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        with:
+          retain_days: 1
+          keep_minimum_runs: 3
