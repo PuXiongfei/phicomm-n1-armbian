@@ -7,6 +7,18 @@ on:
         description: "BOARD"
         required: true
         default: "lepotato"
+      branch:
+        description: "BRANCH"
+        required: true
+        default: "current"
+      release:
+        description: "RELEASE"
+        required: true
+        default: "bullseye"
+      kernelOnly:
+        description: "KERNEL_ONLY"
+        required: true
+        default: "yes"
 env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
@@ -32,18 +44,23 @@ jobs:
       - name: Build Armbian in Docker
         id: build
         run: |
+          if [ "${{ github.event.inputs.boards }}"" != "phicomm-n1" ]; then
+            echo "phicomm-n1"
+          fi
+          ls -la
           cd build
+          ls -la
           sudo ./compile.sh docker \
           BOARD=${{ github.event.inputs.boards }} \
-          BRANCH=current RELEASE=bullseye \
-          KERNEL_ONLY=yes \
+          BRANCH=${{ github.event.inputs.branch }} \
+          RELEASE=${{ github.event.inputs.release }} \
+          KERNEL_ONLY=${{ github.event.inputs.kernelOnly }} \
           KERNEL_CONFIGURE=no \
           BUILD_MINIMAL=no \
           BUILD_DESKTOP=no \
           COMPRESS_OUTPUTIMAGE=yes
           echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
           echo "::set-output name=status::success"
-          ls -la
           ls -la $GITHUB_WORKSPACE/build
       - name: Upload output
         uses: actions/upload-artifact@main
