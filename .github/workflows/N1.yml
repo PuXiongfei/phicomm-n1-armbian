@@ -45,11 +45,8 @@ jobs:
         id: build
         run: |
           if [ "${{ github.event.inputs.boards }}" != "phicomm-n1" ]; then
-            echo "phicomm-n1"
+            echo "not phicomm-n1"
           fi
-          ls -la
-          cd build
-          ls -la
           sudo ./compile.sh docker \
           BOARD=${{ github.event.inputs.boards }} \
           BRANCH=${{ github.event.inputs.branch }} \
@@ -61,13 +58,13 @@ jobs:
           COMPRESS_OUTPUTIMAGE=yes
           echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
           echo "::set-output name=status::success"
-          ls -la $GITHUB_WORKSPACE/build
+          ls -laR $GITHUB_WORKSPACE/build/output
       - name: Upload output
         uses: actions/upload-artifact@main
         if: steps.build.outputs.status == 'success'
         with:
           name: Armbian_${{ github.event.inputs.boards }}${{ env.FILE_DATE }}
-          path: $GITHUB_WORKSPACE/build/output
+          path: ${GITHUB_WORKSPACE}/build/output
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
