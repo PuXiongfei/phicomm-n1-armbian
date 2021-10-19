@@ -1,3 +1,5 @@
+# By PuXiongfei
+
 name: Build Armbian
 
 on:
@@ -67,8 +69,8 @@ jobs:
           mkdir -p ${FILE_DATE}
           cd ${FILE_DATE}
           echo "UPLOAD_PATH=${PWD}" >> $GITHUB_ENV
-          [[ -d ${GITHUB_WORKSPACE}/build/output/images ]] && sudo mv -f output/images/ ./
-          [[ -d ${GITHUB_WORKSPACE}/build/output/debug ]] && sudo mv -f output/debug/ ./
+          [[ -d ${GITHUB_WORKSPACE}/build/output/images ]] && sudo mv -f ${GITHUB_WORKSPACE}/build/output/images ./
+          [[ -d ${GITHUB_WORKSPACE}/build/output/debug ]] && sudo mv -f ${GITHUB_WORKSPACE}/build/output/debug ./
           ls -laR
           echo "::set-output name=status::success"
 
