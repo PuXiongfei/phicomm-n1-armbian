@@ -47,6 +47,7 @@ jobs:
           if [ "${{ github.event.inputs.boards }}" != "phicomm-n1" ]; then
             echo "not phicomm-n1"
           fi
+          cd build
           sudo ./compile.sh docker \
           BOARD=${{ github.event.inputs.boards }} \
           BRANCH=${{ github.event.inputs.branch }} \
