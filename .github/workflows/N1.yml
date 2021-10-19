@@ -43,18 +43,15 @@ jobs:
       - name: Build Armbian
         id: build
         run: |
-          ls -la
           if [ "${{ github.event.inputs.boards }}" == "phicomm-n1" ]; then
-            [[ -d phicomm-n1 ]] && ls -la phicomm-n1 && echo "Copy phicomm-n1 files..." && cp -af phicomm-n1/* build/
+            [[ -d phicomm-n1 ]] && echo "Copy phicomm-n1 files..." && cp -af phicomm-n1/* build/
             mkdir -p build/output/images
             echo "phicomm-n1" > build/output/images/phicomm-n1.txt
             mkdir -p build/output/debug
             echo "phicomm-n1" > build/output/debug/phicomm-n1.txt
-            ls -la build/output
           fi
 
           cd build
-          ls -la build
           echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
           mkdir -p ${GITHUB_WORKSPACE}/${FILE_DATE}
           echo "UPLOAD_PATH=${GITHUB_WORKSPACE}/${FILE_DATE}" >> $GITHUB_ENV
