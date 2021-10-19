@@ -44,7 +44,7 @@ jobs:
       - name: Build Armbian in Docker
         id: build
         run: |
-          if [ "${{ github.event.inputs.boards }}"" != "phicomm-n1" ]; then
+          if [ "${{ github.event.inputs.boards }}" != "phicomm-n1" ]; then
             echo "phicomm-n1"
           fi
           ls -la
