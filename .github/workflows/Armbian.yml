@@ -93,14 +93,14 @@ jobs:
           BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
           COMPRESS_OUTPUTIMAGE=yes"
           echo ${COMPILE_PARAMS}
-          if [[ ${{ github.event.inputs.buildDesktop }} == "yes" ]]; then
+          if [ "${{ github.event.inputs.buildDesktop }}" == "yes" ]; then
             COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=${{ github.event.inputs.release }}/RELEASE=focal/g')
             echo ${COMPILE_PARAMS}
-            [[ -n ${{ github.event.inputs.desktopEnvironment }} ]] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=${{ github.event.inputs.desktopEnvironment }}"
+            [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=${{ github.event.inputs.desktopEnvironment }}"
             echo ${COMPILE_PARAMS}
-            [[ -n ${{ github.event.inputs.desktopEnvironmentConfig }} ]] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=${{ github.event.inputs.desktopEnvironmentConfig }}"
+            [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=${{ github.event.inputs.desktopEnvironmentConfig }}"
             echo ${COMPILE_PARAMS}
-            [[ -n ${{ github.event.inputs.appgroups }} ]] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=${{ github.event.inputs.appgroups }}"
+            [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=${{ github.event.inputs.appgroups }}"
             echo ${COMPILE_PARAMS}
           fi
           echo "compile params: ${COMPILE_PARAMS}"
