@@ -51,6 +51,8 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
+          root-reserve-mb: 4096
+          swap-size-mb: 4096
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
@@ -92,7 +94,7 @@ jobs:
             COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=${{ github.event.inputs.release }}/RELEASE=focal/g')
             [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=${{ github.event.inputs.desktopEnvironment }}"
             [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=${{ github.event.inputs.desktopEnvironmentConfig }}"
-            [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED='${{ github.event.inputs.appgroups }}'"
+            [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=\"${{ github.event.inputs.appgroups }}\""
           fi
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
