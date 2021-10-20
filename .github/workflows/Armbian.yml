@@ -74,10 +74,6 @@ jobs:
       - name: Override file
         run: |
           [[ -d override ]] && echo "Copy override files..." && cp -af override/* build/
-          mkdir -p build/output/images
-          echo "phicomm-n1" > build/output/images/phicomm-n1.txt
-          mkdir -p build/output/debug
-          echo "phicomm-n1" > build/output/debug/phicomm-n1.txt
           echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
       - name: Build Armbian
@@ -92,19 +88,14 @@ jobs:
           BUILD_MINIMAL=no \
           BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
           COMPRESS_OUTPUTIMAGE=yes"
-          echo ${COMPILE_PARAMS}
           if [ "${{ github.event.inputs.buildDesktop }}" == "yes" ]; then
             COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=${{ github.event.inputs.release }}/RELEASE=focal/g')
-            echo ${COMPILE_PARAMS}
             [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=${{ github.event.inputs.desktopEnvironment }}"
-            echo ${COMPILE_PARAMS}
             [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=${{ github.event.inputs.desktopEnvironmentConfig }}"
-            echo ${COMPILE_PARAMS}
             [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=${{ github.event.inputs.appgroups }}"
-            echo ${COMPILE_PARAMS}
           fi
           echo "compile params: ${COMPILE_PARAMS}"
-          #sudo ./compile.sh ${COMPILE_PARAMS}
+          sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
 
       - name: Organize files
