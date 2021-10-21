@@ -36,7 +36,7 @@ on:
       appgroups:
         description: "DESKTOP_APPGROUPS_SELECTED"
         required: true
-        default: "3dsupport browsers chat desktop_tools editors email internet multimedia office programming remote_desktop"
+        default: "3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"
 
 env:
   TZ: Asia/Shanghai
