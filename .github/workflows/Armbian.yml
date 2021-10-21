@@ -82,18 +82,18 @@ jobs:
         id: build
         run: |
           cd build
-          COMPILE_PARAMS="BOARD=${{ github.event.inputs.boards }} \
-          BRANCH=${{ github.event.inputs.branch }} \
-          RELEASE=${{ github.event.inputs.release }} \
-          KERNEL_ONLY=${{ github.event.inputs.kernelOnly }} \
-          KERNEL_CONFIGURE=no \
-          BUILD_MINIMAL=no \
-          BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
-          COMPRESS_OUTPUTIMAGE=yes"
+          COMPILE_PARAMS="BOARD=\"${{ github.event.inputs.boards }}\" \
+          BRANCH=\"${{ github.event.inputs.branch }}\" \
+          RELEASE=\"${{ github.event.inputs.release }}\" \
+          KERNEL_ONLY=\"${{ github.event.inputs.kernelOnly }}\" \
+          KERNEL_CONFIGURE=\"no\" \
+          BUILD_MINIMAL=\"no\" \
+          BUILD_DESKTOP=\"${{ github.event.inputs.buildDesktop }}\" \
+          COMPRESS_OUTPUTIMAGE=\"yes\""
           if [ "${{ github.event.inputs.buildDesktop }}" == "yes" ]; then
-            COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=${{ github.event.inputs.release }}/RELEASE=focal/g')
-            [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=${{ github.event.inputs.desktopEnvironment }}"
-            [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=${{ github.event.inputs.desktopEnvironmentConfig }}"
+            COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=${{ github.event.inputs.release }}/RELEASE=\"focal\"/g')
+            [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=\"${{ github.event.inputs.desktopEnvironment }}\""
+            [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=\"${{ github.event.inputs.desktopEnvironmentConfig }}\""
             [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=\"${{ github.event.inputs.appgroups }}\""
           fi
           echo "compile params: ${COMPILE_PARAMS}"
