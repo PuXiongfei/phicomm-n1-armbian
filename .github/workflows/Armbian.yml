@@ -134,7 +134,7 @@ jobs:
           echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
 
       - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
+        uses: Mattraks/delete-workflow-runs@main
         with:
           retain_days: 1
-          keep_minimum_runs: 3
+          keep_minimum_runs: 2
