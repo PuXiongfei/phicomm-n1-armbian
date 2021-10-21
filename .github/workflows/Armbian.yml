@@ -37,11 +37,17 @@ on:
         description: "DESKTOP_APPGROUPS_SELECTED"
         required: true
         default: "3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"
+      uploadCowtransfer:
+        description: "upload cowtransfer"
+        required: true
+        default: "false"
+      uploadWetransfer:
+        description: "upload wetransfer"
+        required: true
+        default: "false"
 
 env:
   TZ: Asia/Shanghai
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
 
 jobs:
   build:
@@ -119,7 +125,7 @@ jobs:
 
       - name: Upload to cowtransfer
         id: cowtransfer
-        if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+        if: steps.organize.outputs.status == 'success' && github.event.inputs.uploadCowtransfer == 'true' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD_PATH} 2>&1 | tee cowtransfer.log
           echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
@@ -127,7 +133,7 @@ jobs:
 
       - name: Upload to WeTransfer
         id: wetransfer
-        if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+        if: steps.organize.outputs.status == 'success' && github.event.inputs.uploadWetransfer == 'true' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh ./transfer wet -s -p 16 --no-progress ${UPLOAD_PATH} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
