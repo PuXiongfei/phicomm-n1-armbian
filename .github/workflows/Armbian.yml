@@ -27,8 +27,7 @@ on:
         default: "yes"
       exclude:
         description: "exclude files"
-        required: true
-        default: "phicomm-n1-dts-5.10.y.patch,phicomm-n1-TEXT_OFFSET-5.10.y.patch"
+        required: false
       uploadCowtransfer:
         description: "upload cowtransfer"
         required: true
