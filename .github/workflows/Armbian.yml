@@ -80,9 +80,10 @@ jobs:
             for file in $(echo ${{ github.event.inputs.exclude }} | sed 's/,/ /g')
             do
               echo "find exclude file: $file"
-              if [[ -n "$(echo find $GITHUB_WORKSPACE -name "$file")" ]]; then
-                echo "delete file: $(echo find $GITHUB_WORKSPACE -name "$file")"
-                find $GITHUB_WORKSPACE -name "$file" exec rm -rf {} \;
+              filePath=$(echo find $GITHUB_WORKSPACE -name "$file")
+              if [[ -n "$filePath" ]]; then
+                echo "delete file: $filePath"
+                rm -rf $filePath;
               fi
             done
           fi
