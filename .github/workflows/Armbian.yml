@@ -21,22 +21,10 @@ on:
         description: "KERNEL_ONLY"
         required: true
         default: "no"
-      buildDesktop:
-        description: "BUILD_DESKTOP"
+      override:
+        description: "override files"
         required: true
-        default: "no"
-      desktopEnvironment:
-        description: "DESKTOP_ENVIRONMENT"
-        required: true
-        default: "xfce"
-      desktopEnvironmentConfig:
-        description: "DESKTOP_ENVIRONMENT_CONFIG_NAME"
-        required: true
-        default: "config_base"
-      appgroups:
-        description: "DESKTOP_APPGROUPS_SELECTED"
-        required: true
-        default: "3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"
+        default: "yes"
       uploadCowtransfer:
         description: "upload cowtransfer"
         required: true
@@ -57,7 +45,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 26000
+          root-reserve-mb: 10240
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
@@ -80,7 +68,10 @@ jobs:
 
       - name: Override file
         run: |
-          [[ -d override ]] && echo "Copy override files..." && cp -af override/* build/
+          if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
+            echo "Copy override files..."
+            cp -af override/* build/
+          fi
           echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
       - name: Build Armbian
@@ -93,14 +84,8 @@ jobs:
           KERNEL_ONLY=\"${{ github.event.inputs.kernelOnly }}\" \
           KERNEL_CONFIGURE=\"no\" \
           BUILD_MINIMAL=\"no\" \
-          BUILD_DESKTOP=\"${{ github.event.inputs.buildDesktop }}\" \
+          BUILD_DESKTOP=\"no\" \
           COMPRESS_OUTPUTIMAGE=\"yes\""
-          if [ "${{ github.event.inputs.buildDesktop }}" == "yes" ]; then
-            COMPILE_PARAMS=$(echo ${COMPILE_PARAMS} | sed 's/RELEASE=\"${{ github.event.inputs.release }}\"/RELEASE=\"focal\"/g')
-            [ -n "${{ github.event.inputs.desktopEnvironment }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT=\"${{ github.event.inputs.desktopEnvironment }}\""
-            [ -n "${{ github.event.inputs.desktopEnvironmentConfig }}" ] && COMPILE_PARAMS+=" DESKTOP_ENVIRONMENT_CONFIG_NAME=\"${{ github.event.inputs.desktopEnvironmentConfig }}\""
-            [ -n "${{ github.event.inputs.appgroups }}" ] && COMPILE_PARAMS+=" DESKTOP_APPGROUPS_SELECTED=\"${{ github.event.inputs.appgroups }}\""
-          fi
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
