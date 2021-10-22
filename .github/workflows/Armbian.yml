@@ -25,6 +25,10 @@ on:
         description: "override files"
         required: true
         default: "yes"
+      exclude:
+        description: "exclude files"
+        required: true
+        default: "phicomm-n1-dts-5.10.y.patch,phicomm-n1-TEXT_OFFSET-5.10.y.patch"
       uploadCowtransfer:
         description: "upload cowtransfer"
         required: true
@@ -71,6 +75,16 @@ jobs:
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
             echo "Copy override files..."
             cp -af override/* build/
+          fi
+          if [[ -n "${{ github.event.inputs.exclude }}" ]]; then
+            for file in $(echo ${{ github.event.inputs.exclude }} | sed 's/,/ /g')
+            do
+              echo "find exclude file: ${{ file }}"
+              if [[ -n "$(echo find $GITHUB_WORKSPACE -name "${{ file }}")" ]]; then
+                echo "delete file: $(echo find $GITHUB_WORKSPACE -name "${{ file }}")"
+                find $GITHUB_WORKSPACE -name "${{ file }}" exec rm -rf {} \;
+              fi
+            done
           fi
           echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
