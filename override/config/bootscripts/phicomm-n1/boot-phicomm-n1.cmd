@@ -1,20 +1,10 @@
-setenv numlist "0 1 2 3"
-setenv devtype "mmc"
-if usb start; then
-    setenv devtype "usb"
-fi
-
-if test "${loadlist}" = ""; then
-    setenv loadlist "ext4load fatload"
-    saveenv
-    for load in ${loadlist}; do
-        for devnum in ${numlist}; do
-            if ${load} ${devtype} ${devnum} 1080000 aml_autoscript; then
-                autoscr 1080000
-            fi
-        done
-    done
-fi
+setenv bootcmd 'run start_autoscript; run storeboot'
+setenv start_autoscript 'if mmcinfo; then run start_mmc_autoscript; fi; if usb start; then run start_usb_autoscript; fi; run start_emmc_autoscript'
+setenv start_emmc_autoscript 'for devnum in 0 1 2 3; do if extload mmc ${devnum} 1020000 /boot/emmc_autoscript || fatload mmc ${devnum} 1020000 emmc_autoscript; then autoscr 1020000; fi; done'
+setenv start_mmc_autoscript 'for devnum in 0 1 2 3; do if extload mmc ${devnum} 1020000 /boot/emmc_autoscript || fatload mmc ${devnum} 1020000 emmc_autoscript; then autoscr 1020000; fi; done'
+setenv start_usb_autoscript 'for devnum in 0 1 2 3; do if extload mmc ${devnum} 1020000 /boot/emmc_autoscript || fatload mmc ${devnum} 1020000 emmc_autoscript; then autoscr 1020000; fi; done'
+setenv upgrade_step 2
+saveenv
 
 setenv ramdisk_addr_r "0x13000000"
 setenv load_addr "0x01040000"
@@ -31,28 +21,49 @@ setenv prefix "/boot/"
 setenv INITRD "uInitrd"
 setenv LINUX "Image"
 
-for load in ${loadlist}; do
-    if test "${load}" = "fatload"; then
-        setenv prefix
+setenv devtype "mmc"
+if usb start; then
+    setenv devtype "usb"
+fi
+echo "devtype: ${devtype}"
+
+for devnum in 0 1 2 3; do
+    if test -e ${devtype} ${devnum} ${prefix}armbianEnv.txt || test -e ${devtype} ${devnum} armbianEnv.txt; then
+        ext4load ${devtype} ${devnum} ${prefix}armbianEnv.txt || fatload ${devtype} ${devnum} armbianEnv.txt
+        env import -t ${load_addr} ${filesize}
+    else
+        echo "Not found armbianEnv.txt"
     fi
-    for devnum in ${numlist}; do
-        if test -e ${devtype} ${devnum} ${prefix}armbianEnv.txt; then
-            ${load} ${devtype} ${devnum} ${load_addr} ${prefix}armbianEnv.txt
-            env import -t ${load_addr} ${filesize}
 
-            if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
-            if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
-            if test "${bootlogo}" = "true"; then setenv consoleargs "bootsplash.bootfile=bootsplash.armbian ${consoleargs}"; fi
+    echo "Current fdtfile after armbianEnv: ${fdtfile}"
 
-            setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
-            if test "${docker_optimizations}" = "on"; then setenv bootargs "${bootargs} cgroup_enable=memory swapaccount=1"; fi
+    if test -e ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || test -e ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}; then
+        ext4load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || fatload ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}
+    else
+        echo "Not found LINUX"
+    fi
 
-            ${load} ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}
-            ${load} ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}
-            ${load} ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
-            fdt addr ${fdt_addr_r}
+    if test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}; then
+        ext4load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || fatload ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}
+    else
+        echo "Not found INITRD"
+    fi
 
-            booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
-        fi
-    done
+    if test -e ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}; then
+        ext4load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || fatload ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}
+        fdt addr ${fdt_addr_r}
+        fdt resize 65536
+    else
+        echo "Not found DTB"
+    fi
+
+    if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
+    if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
+    if test "${bootlogo}" = "true"; then setenv consoleargs "bootsplash.bootfile=bootsplash.armbian ${consoleargs}"; fi
+
+    setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
+    if test "${docker_optimizations}" = "on"; then setenv bootargs "${bootargs} cgroup_enable=memory swapaccount=1"; fi
+    echo "bootargs: ${bootargs}"
+
+    booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
 done
