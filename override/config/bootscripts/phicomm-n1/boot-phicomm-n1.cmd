@@ -27,8 +27,15 @@ fi
 echo "devtype: ${devtype}"
 
 for devnum in 0 1 2 3; do
-    if test -e ${devtype} ${devnum} ${prefix}armbianEnv.txt || test -e ${devtype} ${devnum} armbianEnv.txt; then
-        ext4load ${devtype} ${devnum} ${prefix}armbianEnv.txt || fatload ${devtype} ${devnum} armbianEnv.txt
+    echo "devnum: ${devnum}"
+
+    if test -e ${devtype} ${devnum} ${prefix}armbianEnv.txt; then
+        echo "ext4load: ${prefix}armbianEnv.txt"
+        ext4load ${devtype} ${devnum} ${load_addr} ${prefix}armbianEnv.txt
+        env import -t ${load_addr} ${filesize}
+    elif test -e ${devtype} ${devnum} armbianEnv.txt; then
+        echo "fatload: armbianEnv.txt"
+        fatload ${devtype} ${devnum} ${load_addr} armbianEnv.txt
         env import -t ${load_addr} ${filesize}
     else
         echo "Not found armbianEnv.txt"
@@ -36,25 +43,38 @@ for devnum in 0 1 2 3; do
 
     echo "Current fdtfile after armbianEnv: ${fdtfile}"
 
-    if test -e ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || test -e ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}; then
-        ext4load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || fatload ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}
+    if test -e ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}; then
+        echo "ext4load: ${prefix}${LINUX}"
+        ext4load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}
+    elif test -e ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}; then
+        echo "fatload: ${LINUX}"
+        fatload ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}
     else
         echo "Not found LINUX"
     fi
 
-    if test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}; then
-        ext4load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || fatload ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}
+    if test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}; then
+        echo "ext4load: ${prefix}${INITRD}"
+        ext4load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}
+    elif test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}; then
+        echo "fatload: ${INITRD}"
+        fatload ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}
     else
         echo "Not found INITRD"
     fi
 
-    if test -e ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}; then
-        ext4load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || fatload ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}
-        fdt addr ${fdt_addr_r}
-        fdt resize 65536
+    if test -e ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}; then
+        echo "ext4load: ${prefix}dtb/${fdtfile}"
+        ext4load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
+    elif ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}; then
+        echo "fatload: dtb/${fdtfile}"
+        fatload ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}
     else
         echo "Not found DTB"
     fi
+
+    fdt addr ${fdt_addr_r}
+    fdt resize 65536
 
     if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
     if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
