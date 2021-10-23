@@ -7,9 +7,9 @@ setenv upgrade_step 2
 saveenv
 
 setenv ramdisk_addr_r "0x13000000"
-setenv load_addr "0x01040000"
-setenv kernel_addr_r "0x01080000"
-setenv fdt_addr_r "0x01000000"
+setenv load_addr "0x32000000"
+setenv kernel_addr_r "0x34000000"
+setenv fdt_addr_r "0x4080000"
 # default values
 setenv rootdev "/dev/mmcblk1p1"
 setenv verbosity "1"
