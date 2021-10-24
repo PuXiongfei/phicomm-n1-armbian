@@ -20,7 +20,7 @@ setenv prefix "/boot/"
 setenv INITRD "uInitrd"
 setenv LINUX "Image"
 
-for devtype in "mmc usb"; do
+for devtype in "usb mmc"; do
     echo "devtype: ${devtype}"
     for devnum in 0 1 2 3; do
         echo "devnum: ${devnum}"
@@ -34,30 +34,27 @@ for devtype in "mmc usb"; do
             echo "Not found armbianEnv.txt"
         fi
 
-        if test -e ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || test -e ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}; then
+        if test -e ${devtype} ${devnum} ${prefix}${LINUX} || test -e ${devtype} ${devnum} ${LINUX}; then
             echo "load ${LINUX}"
             ext4load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX} || fatload ${devtype} ${devnum} ${kernel_addr_r} ${LINUX}
         else
             echo "Not found LINUX"
-            exit
         fi
 
-        if test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || test -e ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}; then
+        if test -e ${devtype} ${devnum} ${prefix}${INITRD} || test -e ${devtype} ${devnum} ${INITRD}; then
             echo "load ${INITRD}"
             ext4load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD} || fatload ${devtype} ${devnum} ${ramdisk_addr_r} ${INITRD}
         else
             echo "Not found INITRD"
-            exit
         fi
 
-        if test -e ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || test -e ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}; then
+        if test -e ${devtype} ${devnum} ${prefix}dtb/${fdtfile} || test -e ${devtype} ${devnum} dtb/${fdtfile}; then
             echo "load dtb/${fdtfile}"
             ext4load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile} || fatload ${devtype} ${devnum} ${fdt_addr_r} dtb/${fdtfile}
             fdt addr ${fdt_addr_r}
             fdt resize 65536
         else
             echo "Not found DTB"
-            exit
         fi
 
         if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
