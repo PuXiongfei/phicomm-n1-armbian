@@ -88,7 +88,7 @@ if grep -q $PART_ROOT /proc/mounts ; then
 fi
 
 echo "Formatting ROOT partition..."
-mkfs.ext4 -q -m 2 -O ^64bit -F $PART_ROOT
+mkfs.ext4 -q -m 2 -O ^64bit $PART_ROOT
 tune2fs -o journal_data_writeback $PART_ROOT
 echo "done."
 
