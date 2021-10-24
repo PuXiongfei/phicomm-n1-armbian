@@ -151,6 +151,7 @@ echo "UUID=${ROOT_UUID} / ext4 defaults,noatime,commit=600,errors=remount-ro 0 1
 echo "tmpfs /tmp tmpfs defaults,nosuid 0 0" >> $DIR_INSTALL/etc/fstab
 echo "Done"
 
+rm -r $DIR_INSTALL/boot/'System Volume Information'
 rm $DIR_INSTALL/boot/s9*
 rm $DIR_INSTALL/boot/aml*
 rm $DIR_INSTALL/root/*.sh
