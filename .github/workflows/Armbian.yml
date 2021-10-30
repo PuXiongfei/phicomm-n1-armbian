@@ -106,6 +106,7 @@ jobs:
 
       - name: Organize files
         id: organize
+        if: always()
         run: |
           mkdir -p ${FILE_DATE}
           cd ${FILE_DATE}
