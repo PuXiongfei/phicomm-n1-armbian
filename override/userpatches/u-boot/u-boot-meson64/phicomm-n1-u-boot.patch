@@ -1,3 +1,15 @@
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index fc16a57e60..18e2c5c84e 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -168,6 +168,7 @@ dtb-$(CONFIG_ARCH_MESON) += \
+ 	meson-gxl-s905x-libretech-cc.dtb \
+ 	meson-gxl-s905x-libretech-cc-v2.dtb \
+ 	meson-gxl-s905x-khadas-vim.dtb \
++	meson-gxl-s905d-phicomm-n1.dtb \
+ 	meson-gxl-s905d-libretech-pc.dtb \
+ 	meson-gxm-khadas-vim2.dtb \
+ 	meson-gxm-s912-libretech-pc.dtb \
 diff --git a/arch/arm/dts/meson-gxl-s905d-p230.dts b/arch/arm/dts/meson-gxl-s905d-p230.dts
 new file mode 100644
 index 0000000000..f025109f25
