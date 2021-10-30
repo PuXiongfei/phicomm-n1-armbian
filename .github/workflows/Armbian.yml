@@ -106,7 +106,7 @@ jobs:
 
       - name: Organize files
         id: organize
-        if: always()
+        if: success() || failure()
         run: |
           mkdir -p ${FILE_DATE}
           cd ${FILE_DATE}
@@ -116,7 +116,7 @@ jobs:
 
       - name: Upload output
         uses: actions/upload-artifact@main
-        if: steps.organize.outputs.status == 'success'
+        if: success() || failure()
         with:
           name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
