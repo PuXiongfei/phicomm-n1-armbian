@@ -48,7 +48,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 10240
+          root-reserve-mb: 40960
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload output
         uses: actions/upload-artifact@main
-        if: steps.build.outputs.status == 'success'
+        if: steps.organize.outputs.status == 'success'
         with:
           name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
