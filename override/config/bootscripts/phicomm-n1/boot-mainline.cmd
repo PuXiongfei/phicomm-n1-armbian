@@ -23,8 +23,8 @@ for devtype in "usb mmc"; do
         echo "Current prefix: ${prefix}"
 
         if test -e ${devtype} ${devnum} ${prefix}u-boot.bin; then
-            echo "${loader} ${devtype} ${devnum} 0x08000000 ${prefix}u-boot.bin"
-            ${loader} ${devtype} ${devnum} 0x08000000 ${prefix}u-boot.bin && go 0x08000000
+            echo "${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin"
+            ${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin && go 0x01000000
         else
             echo "Not found u-boot.bin"
         fi
