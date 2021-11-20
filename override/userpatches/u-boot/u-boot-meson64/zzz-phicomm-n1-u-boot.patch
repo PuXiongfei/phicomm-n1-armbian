@@ -243,7 +243,7 @@ index ba7c12b2c1..89de6f9ed2 100644
  F:	configs/libretech-s912-pc_defconfig
 diff --git a/configs/phicomm-n1_defconfig b/configs/phicomm-n1_defconfig
 new file mode 100644
-index 0000000000..29e578f7d1
+index 0000000000..cf757e14c5
 --- /dev/null
 +++ b/configs/phicomm-n1_defconfig
 @@ -0,0 +1,82 @@
@@ -325,8 +325,8 @@ index 0000000000..29e578f7d1
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_FAT=y
 +CONFIG_ENV_FAT_INTERFACE="mmc"
-+CONFIG_ENV_FAT_DEVICE_AND_PART=":auto"
++CONFIG_ENV_FAT_DEVICE_AND_PART="1:auto"
 +CONFIG_ENV_IS_IN_EXT4=y
 +CONFIG_ENV_EXT4_INTERFACE="mmc"
-+CONFIG_ENV_EXT4_DEVICE_AND_PART=":auto"
++CONFIG_ENV_EXT4_DEVICE_AND_PART="1:auto"
 \ No newline at end of file
