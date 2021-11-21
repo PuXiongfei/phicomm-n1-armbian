@@ -47,67 +47,78 @@ for devtype in "usb mmc"; do
 
     echo "Current ethaddr: ${ethaddr}"
 
-    if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
-    if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
-    if test "${bootlogo}" = "true"; then setenv consoleargs "bootsplash.bootfile=bootsplash.armbian ${consoleargs}"; fi
-
-    setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
-    if test "${docker_optimizations}" = "on"; then setenv bootargs "${bootargs} cgroup_enable=memory swapaccount=1"; fi
-    echo "Mainline bootargs: ${bootargs}"
-
     if test -e ${devtype} ${devnum} ${prefix}${INITRD}; then
-        echo "load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}"
-        load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}
+        bootfileexist="true"
     else
+        bootfileexist="false"
         echo "Not found INITRD"
     fi
 
     if test -e ${devtype} ${devnum} ${prefix}${LINUX}; then
-        echo "load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}"
-        load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}
+        bootfileexist="true"
     else
+        bootfileexist="false"
         echo "Not found LINUX"
     fi
 
     if test -e ${devtype} ${devnum} ${prefix}dtb/${fdtfile}; then
+        bootfileexist="true"
+    else
+        bootfileexist="false"
+        echo "Not found DTB"
+    fi
+
+    if test "${bootfileexist}" = "true"; then
+        if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
+        if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
+        if test "${bootlogo}" = "true"; then setenv consoleargs "bootsplash.bootfile=bootsplash.armbian ${consoleargs}"; fi
+
+        setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
+        if test "${docker_optimizations}" = "on"; then setenv bootargs "${bootargs} cgroup_enable=memory swapaccount=1"; fi
+        echo "Mainline bootargs: ${bootargs}"
+
+        echo "load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}"
+        load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}
+
+        echo "load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}"
+        load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}
+
         echo "load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}"
         load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
         fdt addr ${fdt_addr_r}
         fdt resize 65536
-    else
-        echo "Not found DTB"
+
+        for overlay_file in ${overlays}; do
+            if load ${devtype} ${devnum} ${load_addr} ${prefix}dtb/amlogic/overlay/${overlay_prefix}-${overlay_file}.dtbo; then
+                echo "Applying kernel provided DT overlay ${overlay_prefix}-${overlay_file}.dtbo"
+                fdt apply ${load_addr} || setenv overlay_error "true"
+            fi
+        done
+
+        for overlay_file in ${user_overlays}; do
+            if load ${devtype} ${devnum} ${load_addr} ${prefix}overlay-user/${overlay_file}.dtbo; then
+                echo "Applying user provided DT overlay ${overlay_file}.dtbo"
+                fdt apply ${load_addr} || setenv overlay_error "true"
+            fi
+        done
+
+        if test "${overlay_error}" = "true"; then
+            echo "Error applying DT overlays, restoring original DT"
+            load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
+        else
+            if load ${devtype} ${devnum} ${load_addr} ${prefix}dtb/amlogic/overlay/${overlay_prefix}-fixup.scr; then
+                echo "Applying kernel provided DT fixup script (${overlay_prefix}-fixup.scr)"
+                source ${load_addr}
+            fi
+            if test -e ${devtype} ${devnum} ${prefix}fixup.scr; then
+                load ${devtype} ${devnum} ${load_addr} ${prefix}fixup.scr
+                echo "Applying user provided fixup script (fixup.scr)"
+                source ${load_addr}
+            fi
+        fi
+
+        booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
     fi
-
-    for overlay_file in ${overlays}; do
-        if load ${devtype} ${devnum} ${load_addr} ${prefix}dtb/amlogic/overlay/${overlay_prefix}-${overlay_file}.dtbo; then
-            echo "Applying kernel provided DT overlay ${overlay_prefix}-${overlay_file}.dtbo"
-            fdt apply ${load_addr} || setenv overlay_error "true"
-        fi
-    done
-
-    for overlay_file in ${user_overlays}; do
-        if load ${devtype} ${devnum} ${load_addr} ${prefix}overlay-user/${overlay_file}.dtbo; then
-            echo "Applying user provided DT overlay ${overlay_file}.dtbo"
-            fdt apply ${load_addr} || setenv overlay_error "true"
-        fi
-    done
-
-    if test "${overlay_error}" = "true"; then
-        echo "Error applying DT overlays, restoring original DT"
-        load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
-    else
-        if load ${devtype} ${devnum} ${load_addr} ${prefix}dtb/amlogic/overlay/${overlay_prefix}-fixup.scr; then
-            echo "Applying kernel provided DT fixup script (${overlay_prefix}-fixup.scr)"
-            source ${load_addr}
-        fi
-        if test -e ${devtype} ${devnum} ${prefix}fixup.scr; then
-            load ${devtype} ${devnum} ${load_addr} ${prefix}fixup.scr
-            echo "Applying user provided fixup script (fixup.scr)"
-            source ${load_addr}
-        fi
-    fi
-
-    booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
 done
 
 # Recompile with:
