@@ -24,8 +24,10 @@ for devtype in "usb mmc"; do
     for devnum in 0 1 2 3; do
         echo "devnum: ${devnum}"
 
-        if test -e ${devtype} ${devnum} u-boot.bin; then
-            setenv prefix ""
+        setenv bootfstype
+        fstype ${devtype} ${devnum} bootfstype
+        if test "${bootfstype}" = "fat"; then
+            setenv prefix "/"
         fi
 
         echo "Current prefix: ${prefix}"

@@ -14,9 +14,9 @@ for devtype in "usb mmc"; do
     for devnum in 0 1 2 3; do
         echo "devnum: ${devnum}"
 
-        if test -e ${devtype} ${devnum} u-boot.bin; then
+        if test -e ${devtype} ${devnum} /u-boot.bin; then
             setenv loader "fatload"
-            setenv prefix ""
+            setenv prefix "/"
         fi
 
         echo "Current loader: ${loader}"
