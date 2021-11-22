@@ -99,7 +99,10 @@ jobs:
           KERNEL_CONFIGURE=\"no\" \
           BUILD_MINIMAL=\"no\" \
           BUILD_DESKTOP=\"no\" \
-          COMPRESS_OUTPUTIMAGE=\"yes\""
+          COMPRESS_OUTPUTIMAGE=\"yes\" \
+          EXPERT=\"yes\" \
+          EXTRAWIFI=\"no\" \
+          WIREGUARD=\"no\""
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
