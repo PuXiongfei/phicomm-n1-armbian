@@ -18,7 +18,8 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	export LC_ALL=C LANG=C
+	export LANG=C
+	export LC_ALL=C
 	export DEBIAN_FRONTEND=noninteractive
 
 	# reconfigure tzdata
