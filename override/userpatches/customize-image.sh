@@ -18,6 +18,7 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	export LC_ALL=C LANG=C
 	export DEBIAN_FRONTEND=noninteractive
 
 	# reconfigure tzdata
@@ -26,9 +27,6 @@ Main() {
 
 	# fonts-noto-cjk
 	apt install -y fonts-noto-cjk
-
-	# install OMV
-	wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | bash
 
 } # Main
 
