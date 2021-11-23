@@ -18,9 +18,18 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	export DEBIAN_FRONTEND=noninteractive
+
 	# reconfigure tzdata
 	timedatectl set-timezone "Asia/Shanghai"
-	dpkg-reconfigure --frontend=noninteractive tzdata >/dev/null 2>&1
+	dpkg-reconfigure tzdata
+
+	# fonts-noto-cjk
+	apt install -y fonts-noto-cjk
+
+	# install OMV
+	sudo wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
+
 } # Main
 
 Main "$@"
