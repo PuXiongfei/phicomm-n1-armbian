@@ -18,12 +18,10 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	export LANG=C
-	export LC_ALL=C
 	export DEBIAN_FRONTEND=noninteractive
 
-	# reconfigure tzdata
-	timedatectl set-timezone "Asia/Shanghai"
+	# change time zone data
+	echo "Asia/Shanghai" >/etc/timezone
 	dpkg-reconfigure tzdata
 
 	# fonts-noto-cjk
