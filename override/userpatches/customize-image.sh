@@ -28,7 +28,7 @@ Main() {
 	apt install -y fonts-noto-cjk
 
 	# install OMV
-	sudo wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
+	wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | bash
 
 } # Main
 
