@@ -18,12 +18,9 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	export DEBIAN_FRONTEND=noninteractive
-
-	# change time zone data
-	echo "Asia/Shanghai" >/etc/timezone
-	dpkg-reconfigure tzdata
-
+	# timezone
+	ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	dpkg-reconfigure -f noninteractive tzdata
 	# fonts-noto-cjk
 	apt install -y fonts-noto-cjk
 
