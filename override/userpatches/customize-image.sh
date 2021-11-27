@@ -23,11 +23,15 @@ Main() {
 	dpkg-reconfigure -f noninteractive tzdata
 	# fonts-noto-cjk
 	apt install -y fonts-noto-cjk
-	# en_US.UTF-8 locale
-	if ! grep -q "^en_US.UTF-8 UTF-8" /etc/locale.gen; then
-		echo "en_US.UTF-8 locale"
-		sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+	# locale
+	if ! grep -q "^zh_CN.UTF-8 UTF-8" /etc/locale.gen; then
+		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"
+		sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen
+		cat /etc/locale.gen
+		echo "locale-gen"
 		locale-gen
+		echo "update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8"
+		update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8
 	fi
 
 } # Main
