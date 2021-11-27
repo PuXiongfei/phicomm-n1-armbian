@@ -23,8 +23,9 @@ Main() {
 	dpkg-reconfigure -f noninteractive tzdata
 	# fonts-noto-cjk
 	apt install -y fonts-noto-cjk
-	# en_US.UTF-8 Locales settings
+	# en_US.UTF-8 locale
 	if ! grep -q "^en_US.UTF-8 UTF-8" /etc/locale.gen; then
+		echo "en_US.UTF-8 locale"
 		sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
 		locale-gen
 	fi
