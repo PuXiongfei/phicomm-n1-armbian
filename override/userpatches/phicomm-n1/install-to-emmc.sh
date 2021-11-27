@@ -88,7 +88,8 @@ if grep -q $PART_ROOT /proc/mounts ; then
 fi
 
 echo "Formatting ROOT partition..."
-mkfs.ext4 -F -q -m 2 -O ^64bit $PART_ROOT
+node_number=
+mkfs.ext4 -F -q -m 2 -O ^64bit,^metadata_csum -N $((128*${node_number})) $PART_ROOT
 tune2fs -o journal_data_writeback $PART_ROOT
 echo "done."
 
@@ -111,8 +112,8 @@ echo "Copy HOME"
 tar -cf - home | (cd $DIR_INSTALL; tar -xpf -)
 echo "Copy LIB"
 tar -cf - lib | (cd $DIR_INSTALL; tar -xpf -)
-echo "Copy LIB64"
-tar -cf - lib64 | (cd $DIR_INSTALL; tar -xpf -)
+#echo "Copy LIB64"
+#tar -cf - lib64 | (cd $DIR_INSTALL; tar -xpf -)
 echo "Create MEDIA"
 mkdir -p $DIR_INSTALL/media
 #tar -cf - media | (cd $DIR_INSTALL; tar -xpf -)

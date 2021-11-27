@@ -33,6 +33,14 @@ Main() {
 		echo "update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8"
 		update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8
 	fi
+	# install-to-emmc node_number
+	if [[ $BUILD_DESKTOP == yes ]]; then
+		echo "sed -i 's/node_number=/node_number=4096/g' $SDCARD/root/install-to-emmc.sh"
+		sed -i 's/node_number=/node_number=4096/g' $SDCARD/root/install-to-emmc.sh
+	else
+		echo "sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh"
+		sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh
+	fi
 
 } # Main
 
