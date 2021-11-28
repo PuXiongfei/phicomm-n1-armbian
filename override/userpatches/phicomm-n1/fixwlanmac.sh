@@ -16,6 +16,9 @@ if [[ -f "/lib/firmware/brcm/brcmfmac43455-sdio.txt" ]]; then
     "/lib/firmware/brcm/brcmfmac43455-sdio.txt"
 fi
 
-cp -a -f /lib/firmware/brcm/brcmfmac43455-sdio.txt /lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt
+if [[ -f "/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt" ]]; then
+  sed -i -e "s/^macaddr=.*/macaddr=$WLAN_MAC/" \
+    "/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt"
+fi
 
 echo "WiFi MAC address modified successfully!"
