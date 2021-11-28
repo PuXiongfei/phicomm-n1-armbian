@@ -1,30 +1,47 @@
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-index b2ab05c22090..f025109f253c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-@@ -86,8 +86,7 @@ external_phy: ethernet-phy@0 {
- 		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
- 
- 		interrupt-parent = <&gpio_intc>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--		eee-broken-1000t;
-+		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
- 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-index 9ef210f17b4a..c775b627ba8f 100644
+index 9ef210f17b4a..65fa81c5f7bb 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-@@ -33,3 +33,22 @@ &cvbs_vdac_port {
+@@ -33,3 +33,53 @@ &cvbs_vdac_port {
  &usb {
  	dr_mode = "host";
  };
++
++&ethmac {
++	pinctrl-0 = <&eth_pins>;
++	pinctrl-names = "default";
++
++	/* Select external PHY by default */
++	phy-handle = <&external_phy>;
++
++	amlogic,tx-delay-ns = <2>;
++
++	/* External PHY is in RGMII */
++	phy-mode = "rgmii";
++
++	status = "okay";
++};
++
++&external_mdio {
++	external_phy: ethernet-phy@0 {
++		/* Realtek RTL8211F (0x001cc916) */
++		reg = <0>;
++
++		reset-assert-us = <10000>;
++		reset-deassert-us = <80000>;
++		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
++
++		interrupt-parent = <&gpio_intc>;
++		/* MAC_INTR on GPIOZ_15 */
++		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
 +
 +&sd_emmc_b {
 +	status = "disabled";
 +};
 +
++/* This one is connected to the Bluetooth module */
 +&uart_A {
 +	status = "okay";
 +	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
