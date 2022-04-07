@@ -1,2 +1,2 @@
-# armbian-phicomm-n1
-armbian-phicomm-n1
+# phicomm-n1-armbian
+phicomm-n1-armbian
