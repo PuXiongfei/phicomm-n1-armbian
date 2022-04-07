@@ -28,14 +28,6 @@ on:
       exclude:
         description: "exclude files"
         required: false
-      uploadCowtransfer:
-        description: "upload cowtransfer"
-        required: true
-        default: "false"
-      uploadWetransfer:
-        description: "upload wetransfer"
-        required: true
-        default: "false"
 
 env:
   TZ: Asia/Shanghai
@@ -109,7 +101,7 @@ jobs:
 
       - name: Organize files
         id: organize
-        if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
+        if: ${{ steps.compile.outputs.status == 'success' }} && !cancelled()
         run: |
           mkdir -p ${FILE_DATE}
           cd ${FILE_DATE}
@@ -119,26 +111,10 @@ jobs:
 
       - name: Upload output
         uses: actions/upload-artifact@v2
-        if: ${{ steps.organize.outputs.status }} == 'success' && !cancelled()
+        if: ${{ steps.organize.outputs.status == 'success' }} && !cancelled()
         with:
           name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
-
-      - name: Upload to cowtransfer
-        id: cowtransfer
-        if: ${{ steps.organize.outputs.status }} == 'success' && ${{ github.event.inputs.uploadCowtransfer }} == 'true' && !cancelled()
-        run: |
-          curl -fsSL git.io/file-transfer | sh ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD_PATH} 2>&1 | tee cowtransfer.log
-          echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-          echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
-
-      - name: Upload to WeTransfer
-        id: wetransfer
-        if: ${{ steps.organize.outputs.status }} == 'success' && ${{ github.event.inputs.uploadWetransfer }} == 'true' && !cancelled()
-        run: |
-          curl -fsSL git.io/file-transfer | sh ./transfer wet -s -p 16 --no-progress ${UPLOAD_PATH} 2>&1 | tee wetransfer.log
-          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-          echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
