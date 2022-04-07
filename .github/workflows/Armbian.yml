@@ -88,8 +88,8 @@ jobs:
           fi
           echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
-      - name: Build Armbian
-        id: build
+      - name: Compile Armbian
+        id: compile
         run: |
           cd build
           COMPILE_PARAMS="BOARD=\"${{ github.event.inputs.boards }}\" \
@@ -109,7 +109,7 @@ jobs:
 
       - name: Organize files
         id: organize
-        if: success() || failure()
+        if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
         run: |
           mkdir -p ${FILE_DATE}
           cd ${FILE_DATE}
@@ -118,15 +118,15 @@ jobs:
           echo "::set-output name=status::success"
 
       - name: Upload output
-        uses: actions/upload-artifact@main
-        if: success() || failure()
+        uses: actions/upload-artifact@v2
+        if: ${{ steps.organize.outputs.status }} == 'success' && !cancelled()
         with:
           name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
 
       - name: Upload to cowtransfer
         id: cowtransfer
-        if: steps.organize.outputs.status == 'success' && github.event.inputs.uploadCowtransfer == 'true' && !cancelled()
+        if: ${{ steps.organize.outputs.status }} == 'success' && ${{ github.event.inputs.uploadCowtransfer }} == 'true' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD_PATH} 2>&1 | tee cowtransfer.log
           echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
@@ -134,14 +134,14 @@ jobs:
 
       - name: Upload to WeTransfer
         id: wetransfer
-        if: steps.organize.outputs.status == 'success' && github.event.inputs.uploadWetransfer == 'true' && !cancelled()
+        if: ${{ steps.organize.outputs.status }} == 'success' && ${{ github.event.inputs.uploadWetransfer }} == 'true' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh ./transfer wet -s -p 16 --no-progress ${UPLOAD_PATH} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
 
       - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@main
+        uses: Mattraks/delete-workflow-runs@v2
         with:
           retain_days: 1
           keep_minimum_runs: 2
