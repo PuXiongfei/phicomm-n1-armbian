@@ -65,9 +65,9 @@ jobs:
         run: |
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
             echo "Copy override files..."
+            wget https://raw.githubusercontent.com/PuXiongfei/phicomm-n1-u-boot/main/patch/phicomm-n1-u-boot.patch override/userpatches/u-boot/u-boot-meson64/zzz-phicomm-n1-u-boot.patch
+            wget https://github.com/PuXiongfei/phicomm-n1-u-boot/releases/download/v2022.04/u-boot.bin override/userpatches/phicomm-n1/u-boot.bin
             cp -af override/* build/
-            wget https://raw.githubusercontent.com/PuXiongfei/phicomm-n1-u-boot/main/patch/phicomm-n1-u-boot.patch build/userpatches/u-boot/u-boot-meson64/zzz-phicomm-n1-u-boot.patch
-            wget https://github.com/PuXiongfei/phicomm-n1-u-boot/releases/download/v2022.04/u-boot.bin build/userpatches/phicomm-n1/u-boot.bin
           fi
           if [[ -n "${{ github.event.inputs.exclude }}" ]]; then
             for file in $(echo ${{ github.event.inputs.exclude }} | sed 's/,/ /g')
