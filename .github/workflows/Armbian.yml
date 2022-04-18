@@ -64,9 +64,10 @@ jobs:
       - name: Override file
         run: |
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
-            echo "Copy override files..."
-            wget -O override/userpatches/u-boot/u-boot-meson64/zzz-phicomm-n1-u-boot.patch https://raw.githubusercontent.com/PuXiongfei/phicomm-n1-u-boot/main/patch/phicomm-n1-u-boot.patch
             wget -O override/userpatches/phicomm-n1/u-boot.bin https://github.com/PuXiongfei/phicomm-n1-u-boot/releases/download/v2022.04/u-boot.bin
+            mkdir -p override/userpatches/u-boot/u-boot-meson64
+            wget -O override/userpatches/u-boot/u-boot-meson64/zzz-phicomm-n1-u-boot.patch https://raw.githubusercontent.com/PuXiongfei/phicomm-n1-u-boot/main/patch/phicomm-n1-u-boot.patch
+            echo "Copy override files..."
             cp -af override/* build/
           fi
           if [[ -n "${{ github.event.inputs.exclude }}" ]]; then
