@@ -5,30 +5,26 @@ setenv start_usb_autoscript 'if fatload usb 0 0x08000000 s905_autoscript; then a
 saveenv
 
 # default values
+setenv devnum 1
+setenv devtype "mmc"
 setenv loader "ext4load"
 setenv prefix "/boot/"
 
-for devtype in "usb mmc"; do
-    echo "devtype: ${devtype}"
-    if test "${devtype}" = "usb"; then
-        devnum=0
-    elif test "${devtype}" = "mmc"; then
-        devnum=1
-    fi
-    echo "devnum: ${devnum}"
+if test -e usb 0 /u-boot.bin; then
+    setenv devnum 0
+    setenv devtype "usb"
+    setenv loader "fatload"
+    setenv prefix "/"
+fi
 
-    if test -e ${devtype} ${devnum} /u-boot.bin; then
-        setenv loader "fatload"
-        setenv prefix "/"
-    fi
+echo "devnum: ${devnum}"
+echo "devtype: ${devtype}"
+echo "Current loader: ${loader}"
+echo "Current prefix: ${prefix}"
 
-    echo "Current loader: ${loader}"
-    echo "Current prefix: ${prefix}"
-
-    if test -e ${devtype} ${devnum} ${prefix}u-boot.bin; then
-        echo "${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin"
-        ${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin && go 0x01000000
-    else
-        echo "Not found u-boot.bin"
-    fi
-done
+if test -e ${devtype} ${devnum} ${prefix}u-boot.bin; then
+    echo "${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin"
+    ${loader} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin && go 0x01000000
+else
+    echo "Not found u-boot.bin"
+fi
