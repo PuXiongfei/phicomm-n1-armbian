@@ -12,7 +12,7 @@ on:
       branch:
         description: "BRANCH"
         required: true
-        default: "current"
+        default: "edge"
       release:
         description: "RELEASE"
         required: true
@@ -63,6 +63,7 @@ jobs:
 
       - name: Override file
         run: |
+          echo "$(date +"%Y.%m.%d")-PuXiongfei" > build/VERSION
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
             BIN_PATH=$(curl -s https://api.github.com/repos/PuXiongfei/phicomm-n1-u-boot/releases/latest | grep browser_download_url | cut -d '"' -f 4)
             wget -O override/userpatches/phicomm-n1/u-boot.bin ${BIN_PATH}
