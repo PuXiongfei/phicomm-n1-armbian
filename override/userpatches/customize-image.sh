@@ -18,21 +18,6 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	# timezone
-	ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-	dpkg-reconfigure -f noninteractive tzdata
-	# fonts-noto-cjk
-	apt install -y fonts-noto-cjk
-	# locale
-	if ! grep -q "^zh_CN.UTF-8 UTF-8" /etc/locale.gen; then
-		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"
-		sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen
-		cat /etc/locale.gen
-		echo "locale-gen"
-		locale-gen
-		echo "update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8"
-		update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN.UTF-8 LC_MESSAGES=zh_CN.UTF-8
-	fi
 	# install-to-emmc node_number
 	if [[ $BUILD_DESKTOP == yes ]]; then
 		echo "sed -i 's/node_number=/node_number=4096/g' $SDCARD/root/install-to-emmc.sh"
@@ -41,6 +26,14 @@ Main() {
 		echo "sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh"
 		sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh
 	fi
+	# timezone
+	echo "Asia/Shanghai" >/etc/timezone
+	cat /etc/timezone
+	dpkg-reconfigure -f noninteractive tzdata
+	# fonts-noto-cjk
+	apt install -y fonts-noto-cjk
+	# docker
+	curl -fsSL https://get.docker.com | sh -
 
 } # Main
 
