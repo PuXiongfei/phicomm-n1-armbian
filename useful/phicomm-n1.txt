@@ -16,7 +16,7 @@ https://bugcheck.win/category/n1
 
 https://www.right.com.cn/forum/thread-795269-1-1.html
 
-https://github.com/RPi-Distro/firmware-nonfree/tree/master/brcm
+https://github.com/RPi-Distro/firmware-nonfree/tree/bullseye/debian/config/brcm80211/brcm
 
 https://github.com/RPi-Distro/bluez-firmware/tree/master/broadcom
 
