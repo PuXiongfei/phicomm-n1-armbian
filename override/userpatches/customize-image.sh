@@ -27,8 +27,8 @@ Main() {
 		sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh
 	fi
 	# timezone
-	timedatectl set-timezone "Asia/Shanghai"
-	timedatectl
+	ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	dpkg-reconfigure -f noninteractive tzdata
 	# fonts-noto-cjk
 	apt install -y fonts-noto-cjk
 	# docker
