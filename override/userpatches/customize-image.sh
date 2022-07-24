@@ -29,6 +29,11 @@ Main() {
 	# timezone
 	ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	dpkg-reconfigure -f noninteractive tzdata
+	# apt sources.list
+	cp -a /etc/apt/sources.list /etc/apt/sources.list.bak
+	sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+	sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list
+	cat /etc/apt/sources.list
 	# locale
 	if grep -q "# zh_CN.UTF-8" /etc/locale.gen; then
 		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"

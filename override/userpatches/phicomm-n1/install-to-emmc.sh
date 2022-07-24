@@ -98,6 +98,8 @@ echo "Copying ROOTFS."
 mount -o rw $PART_ROOT $DIR_INSTALL
 
 cd /
+echo "Copy armbian.key"
+cp -af armbian.key $DIR_INSTALL
 echo "Copy BIN"
 tar -cf - bin | (cd $DIR_INSTALL; tar -xpf -)
 echo "Copy BOOT"
