@@ -25,6 +25,10 @@ on:
         description: "BUILD_DESKTOP"
         required: true
         default: "no"
+      buildOptions:
+        description: "Build options"
+        required: false
+        default: "DOWNLOAD_MIRROR=china"
       override:
         description: "override files"
         required: true
@@ -103,10 +107,12 @@ jobs:
           EXTERNAL=\"no\" \
           EXPERT=\"yes\" \
           COMPRESS_OUTPUTIMAGE=\"yes\" \
-          REGIONAL_MIRROR=\"china\" \
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\" \
           DEST_LANG=\"zh_CN.UTF-8\""
+          if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
+            COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
+          fi
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
