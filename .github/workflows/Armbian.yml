@@ -101,7 +101,7 @@ jobs:
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\""
           echo "compile params: ${COMPILE_PARAMS}"
-          sudo ./compile.sh docker ${COMPILE_PARAMS}
+          sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
 
       - name: Organize files
