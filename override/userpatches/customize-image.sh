@@ -27,8 +27,10 @@ Main() {
 		sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh
 	fi
 	# timezone
-	ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-	dpkg-reconfigure -f noninteractive tzdata
+	if ! grep -q "Asia/Shanghai" /etc/timezone; then
+		ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+		dpkg-reconfigure -f noninteractive tzdata
+	fi
 	# locale
 	if grep -q "# zh_CN.UTF-8" /etc/locale.gen; then
 		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"
