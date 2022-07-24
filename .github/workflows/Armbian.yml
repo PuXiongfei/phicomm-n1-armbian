@@ -106,8 +106,7 @@ jobs:
           REGIONAL_MIRROR=\"china\" \
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\" \
-          DEST_LANG=\"zh_CN.UTF-8\" \
-          TZDATA=\"Asia/Shanghai\""
+          DEST_LANG=\"zh_CN.UTF-8\""
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
