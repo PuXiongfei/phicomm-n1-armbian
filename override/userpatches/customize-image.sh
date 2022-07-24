@@ -29,8 +29,18 @@ Main() {
 	# timezone
 	ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	dpkg-reconfigure -f noninteractive tzdata
+	# locale
+	if grep -q "# zh_CN.UTF-8" /etc/locale.gen; then
+		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"
+		sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen
+		cat /etc/locale.gen | grep zh_CN
+		echo "locale-gen"
+		locale-gen
+		echo "update-locale --reset LANG=zh_CN.UTF-8"
+		update-locale --reset LANG=zh_CN.UTF-8
+	fi
 	# fonts-noto-cjk
-	apt install -y fonts-noto-cjk
+	apt install -y fonts-noto-cjk fonts-noto-cjk-extra
 	# docker
 	curl -fsSL https://get.docker.com | sh -
 
