@@ -29,6 +29,10 @@ on:
         description: "BUILD_DESKTOP"
         required: true
         default: "no"
+      docker:
+        description: "Building with Docker"
+        required: true
+        default: "yes"
       override:
         description: "override files"
         required: true
@@ -111,6 +115,9 @@ jobs:
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\" \
           DEST_LANG=\"zh_CN.UTF-8\""
+          if [[ "${{ github.event.inputs.docker }}" == "yes" ]]; then
+            COMPILE_PARAMS="docker ${COMPILE_PARAMS}"
+          fi
           echo "compile params: ${COMPILE_PARAMS}"
           sudo ./compile.sh ${COMPILE_PARAMS}
           echo "::set-output name=status::success"
