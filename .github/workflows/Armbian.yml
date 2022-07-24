@@ -17,10 +17,6 @@ on:
         description: "RELEASE"
         required: true
         default: "bullseye"
-      kernelOnly:
-        description: "KERNEL_ONLY"
-        required: true
-        default: "no"
       buildMinimal:
         description: "BUILD_MINIMAL"
         required: true
@@ -104,7 +100,7 @@ jobs:
           COMPILE_PARAMS="BOARD=\"${{ github.event.inputs.boards }}\" \
           BRANCH=\"${{ github.event.inputs.branch }}\" \
           RELEASE=\"${{ github.event.inputs.release }}\" \
-          KERNEL_ONLY=\"${{ github.event.inputs.kernelOnly }}\" \
+          KERNEL_ONLY=\"no\" \
           KERNEL_CONFIGURE=\"no\" \
           BUILD_MINIMAL=\"${{ github.event.inputs.buildMinimal }}\" \
           BUILD_DESKTOP=\"${{ github.event.inputs.buildDesktop }}\" \
