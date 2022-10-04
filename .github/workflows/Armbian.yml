@@ -25,14 +25,10 @@ on:
         description: "BUILD_DESKTOP"
         required: true
         default: "no"
-      buildDesktop:
-        description: "BUILD_DESKTOP"
-        required: true
-        default: "no"
-      desktopOptions:
+      buildDesktopOptions:
         description: "Desktop Options"
         required: false
-        default: "DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED='3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop'"
+        default: 'DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"'
       buildOptions:
         description: "Build options"
         required: false
@@ -118,8 +114,8 @@ jobs:
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\" \
           DEST_LANG=\"zh_CN.UTF-8\""
-          if [[ -n "${{ github.event.inputs.desktopOptions }}" ]]; then
-            COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.desktopOptions }}"
+          if [[ -n "${{ github.event.inputs.buildDesktopOptions }}" ]]; then
+            COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildDesktopOptions }}"
           fi
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
