@@ -26,11 +26,11 @@ on:
         required: true
         default: "no"
       buildDesktopOptions:
-        description: "Desktop Options"
+        description: "Build Desktop Options"
         required: false
         default: 'DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"'
       buildOptions:
-        description: "Build options"
+        description: "Build Options"
         required: false
         default: "DOWNLOAD_MIRROR=china"
       override:
