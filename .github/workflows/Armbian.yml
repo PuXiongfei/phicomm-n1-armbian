@@ -114,7 +114,7 @@ jobs:
           EXTRAWIFI=\"no\" \
           WIREGUARD=\"no\" \
           DEST_LANG=\"zh_CN.UTF-8\""
-          if [[ -n "${{ github.event.inputs.buildDesktopOptions }}" ]]; then
+          if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildDesktopOptions }}"
           fi
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
