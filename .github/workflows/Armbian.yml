@@ -32,7 +32,7 @@ on:
       desktopOptions:
         description: "Desktop Options"
         required: false
-        default: 'DESKTOP_ENVIRONMENT="xfce" DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base" DESKTOP_APPGROUPS_SELECTED="3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"'
+        default: "DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED='3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop'"
       buildOptions:
         description: "Build options"
         required: false
