@@ -108,7 +108,6 @@ jobs:
           KERNEL_CONFIGURE=\"no\" \
           BUILD_MINIMAL=\"${{ github.event.inputs.buildMinimal }}\" \
           BUILD_DESKTOP=\"${{ github.event.inputs.buildDesktop }}\" \
-          EXTERNAL=\"no\" \
           EXPERT=\"yes\" \
           COMPRESS_OUTPUTIMAGE=\"yes\" \
           EXTRAWIFI=\"no\" \
