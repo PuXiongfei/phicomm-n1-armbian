@@ -14,8 +14,7 @@ setenv console "both"
 setenv bootlogo "false"
 setenv rootfstype "ext4"
 setenv docker_optimizations "on"
-setenv INITRD "uInitrd"
-setenv LINUX "Image"
+
 setenv devnum 1
 setenv devtype "mmc"
 setenv prefix "/boot/"
@@ -30,6 +29,10 @@ echo "devnum: ${devnum}"
 echo "devtype: ${devtype}"
 echo "Current prefix: ${prefix}"
 
+# Show what uboot default fdtfile is
+echo "U-boot default fdtfile: ${fdtfile}"
+echo "Current variant: ${variant}"
+
 if test -e ${devtype} ${devnum} ${prefix}armbianEnv.txt; then
     echo "load ${devtype} ${devnum} ${scriptaddr} ${prefix}armbianEnv.txt"
     load ${devtype} ${devnum} ${scriptaddr} ${prefix}armbianEnv.txt
@@ -41,18 +44,22 @@ fi
 
 echo "Current ethaddr: ${ethaddr}"
 
-if test -e ${devtype} ${devnum} ${prefix}${INITRD}; then
+# get PARTUUID of first partition on SD/eMMC it was loaded from
+# mmc 0 is always mapped to device u-boot (2016.09+) was loaded from
+if test "${devtype}" = "mmc"; then part uuid mmc ${devnum}:1 partuuid; fi
+
+if test -e ${devtype} ${devnum} ${prefix}uInitrd; then
     bootfileexist="true"
 else
     bootfileexist="false"
-    echo "Not found INITRD"
+    echo "Not found uInitrd"
 fi
 
-if test -e ${devtype} ${devnum} ${prefix}${LINUX}; then
+if test -e ${devtype} ${devnum} ${prefix}Image; then
     bootfileexist="true"
 else
     bootfileexist="false"
-    echo "Not found LINUX"
+    echo "Not found Image"
 fi
 
 if test -e ${devtype} ${devnum} ${prefix}dtb/${fdtfile}; then
@@ -65,21 +72,21 @@ fi
 if test "${bootfileexist}" = "true"; then
     if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=ttyAML0,115200 console=tty1"; fi
     if test "${console}" = "serial"; then setenv consoleargs "console=ttyAML0,115200"; fi
-	if test "${bootlogo}" = "true"; then
-		setenv consoleargs "splash plymouth.ignore-serial-consoles ${consoleargs}"
-	else
-		setenv consoleargs "splash=verbose ${consoleargs}"
-	fi
+    if test "${bootlogo}" = "true"; then
+        setenv consoleargs "splash plymouth.ignore-serial-consoles ${consoleargs}"
+    else
+        setenv consoleargs "splash=verbose ${consoleargs}"
+    fi
 
-    setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
+    setenv bootargs "root=${rootdev} rootwait rootfstype=${rootfstype} ${consoleargs} consoleblank=0 coherent_pool=2M loglevel=${verbosity} ubootpart=${partuuid} libata.force=noncq usb-storage.quirks=${usbstoragequirks} ${extraargs} ${extraboardargs}"
     if test "${docker_optimizations}" = "on"; then setenv bootargs "${bootargs} cgroup_enable=memory swapaccount=1"; fi
     echo "Mainline bootargs: ${bootargs}"
 
-    echo "load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}"
-    load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}${INITRD}
+    echo "load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}uInitrd"
+    load ${devtype} ${devnum} ${ramdisk_addr_r} ${prefix}uInitrd
 
-    echo "load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}"
-    load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}${LINUX}
+    echo "load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}Image"
+    load ${devtype} ${devnum} ${kernel_addr_r} ${prefix}Image
 
     echo "load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}"
     load ${devtype} ${devnum} ${fdt_addr_r} ${prefix}dtb/${fdtfile}
