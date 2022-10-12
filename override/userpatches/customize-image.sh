@@ -41,8 +41,6 @@ Main() {
 		echo "update-locale --reset LANG=zh_CN.UTF-8"
 		update-locale --reset LANG=zh_CN.UTF-8
 	fi
-	# fonts-noto-cjk
-	apt install -y fonts-noto-cjk fonts-noto-cjk-extra
 	# docker
 	curl -fsSL https://get.docker.com | sh -
 
