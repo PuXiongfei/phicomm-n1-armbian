@@ -13,7 +13,7 @@ index b2ab05c22090..f025109f253c 100644
  };
  
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-index 9ef210f17b4a..6eefa54604d1 100644
+index 9ef210f17b4a..b218a04216ff 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
 @@ -24,6 +24,25 @@ status {
@@ -42,7 +42,7 @@ index 9ef210f17b4a..6eefa54604d1 100644
  };
  
  &cvbs_vdac_port {
-@@ -33,3 +52,33 @@ &cvbs_vdac_port {
+@@ -33,3 +52,37 @@ &cvbs_vdac_port {
  &usb {
  	dr_mode = "host";
  };
@@ -50,6 +50,10 @@ index 9ef210f17b4a..6eefa54604d1 100644
 +&sd_emmc_a {
 +	max-frequency = <100000000>;
 +	sd-uhs-sdr50;
++	//max-frequency = <200000000>;
++	//sd-uhs-sdr104;
++	//max-frequency = <50000000>;
++	//sd-uhs-ddr50;
 +};
 +
 +&sd_emmc_b {
