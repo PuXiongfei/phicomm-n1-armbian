@@ -18,29 +18,20 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	# install-to-emmc node_number
-	if [[ $BUILD_DESKTOP == yes ]]; then
-		echo "sed -i 's/node_number=/node_number=4096/g' $SDCARD/root/install-to-emmc.sh"
-		sed -i 's/node_number=/node_number=4096/g' $SDCARD/root/install-to-emmc.sh
-	else
-		echo "sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh"
-		sed -i 's/node_number=/node_number=1024/g' $SDCARD/root/install-to-emmc.sh
-	fi
-	# timezone
-	if ! grep -q "Asia/Shanghai" /etc/timezone; then
-		ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-		dpkg-reconfigure -f noninteractive tzdata
-	fi
-	# locale
-	if grep -q "# zh_CN.UTF-8" /etc/locale.gen; then
-		echo "sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen"
-		sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen
-		cat /etc/locale.gen | grep zh_CN
-		echo "locale-gen"
-		locale-gen
-		echo "update-locale --reset LANG=zh_CN.UTF-8"
-		update-locale --reset LANG=zh_CN.UTF-8
-	fi
+	# modify armbian-install FIRSTSECTOR for phicomm-n1
+	# (800 * 1024 * 1024) / 512
+	grep FIRSTSECTOR= /usr/sbin/armbian-install
+	sed -i s/^FIRSTSECTOR=.*/FIRSTSECTOR=1638400/ /usr/sbin/armbian-install
+	grep FIRSTSECTOR= /usr/sbin/armbian-install
+
+	grep FIRSTSECTOR= /usr/sbin/nand-sata-install
+	sed -i s/FIRSTSECTOR=.*/FIRSTSECTOR=1638400/ /usr/sbin/nand-sata-install
+	grep FIRSTSECTOR= /usr/sbin/nand-sata-install
+
+	# modify exclude.txt /boot for phicomm-n1
+	sed -i '/boot/d' /usr/lib/nand-sata-install/exclude.txt
+	cat /usr/lib/nand-sata-install/exclude.txt
+
 	# docker
 	curl -fsSL https://get.docker.com | sh -
 
