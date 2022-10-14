@@ -20,19 +20,25 @@ BUILD_DESKTOP=$4
 Main() {
 	# modify armbian-install FIRSTSECTOR for phicomm-n1
 	# (800 * 1024 * 1024) / 512
+	echo "modify armbian-install FIRSTSECTOR for phicomm-n1"
 	grep FIRSTSECTOR= /usr/sbin/armbian-install
 	sed -i s/^FIRSTSECTOR=.*/FIRSTSECTOR=1638400/ /usr/sbin/armbian-install
 	grep FIRSTSECTOR= /usr/sbin/armbian-install
 
+	# modify nand-sata-install FIRSTSECTOR for phicomm-n1
+	# (800 * 1024 * 1024) / 512
+	echo "modify nand-sata-install FIRSTSECTOR for phicomm-n1"
 	grep FIRSTSECTOR= /usr/sbin/nand-sata-install
 	sed -i s/FIRSTSECTOR=.*/FIRSTSECTOR=1638400/ /usr/sbin/nand-sata-install
 	grep FIRSTSECTOR= /usr/sbin/nand-sata-install
 
 	# modify exclude.txt /boot for phicomm-n1
+	echo "modify exclude.txt /boot for phicomm-n1"
 	sed -i '/boot/d' /usr/lib/nand-sata-install/exclude.txt
 	cat /usr/lib/nand-sata-install/exclude.txt
 
-	# docker
+	# install docker
+	echo "install docker"
 	curl -fsSL https://get.docker.com | sh -
 
 } # Main
