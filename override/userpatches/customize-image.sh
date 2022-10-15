@@ -18,6 +18,13 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	# rename /usr/lib/linux-u-boot*/u-boot.bin to u-boot-mainline.bin
+	echo "rename /usr/lib/linux-u-boot*/u-boot.bin to u-boot-mainline.bin"
+	mv -f /usr/lib/linux-u-boot*/u-boot.bin /usr/lib/linux-u-boot*/u-boot-mainline.bin
+	# copy /usr/lib/linux-u-boot*/u-boot-mainline.bin to /boot/u-boot.bin
+	echo "copy /usr/lib/linux-u-boot*/u-boot-mainline.bin to /boot/u-boot.bin"
+	cp -af /usr/lib/linux-u-boot*/u-boot-mainline.bin /boot/u-boot.bin
+
 	# modify armbian-install for phicomm-n1
 	echo "modify parted SECTOR (800 * 1024 * 1024) / 512"
 	sed -i 's/FIRSTSECTOR=.*/FIRSTSECTOR=1638400/' /usr/sbin/armbian-install
