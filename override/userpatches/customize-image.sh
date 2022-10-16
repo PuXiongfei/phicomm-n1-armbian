@@ -18,12 +18,17 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
-	# rename /usr/lib/linux-u-boot*/u-boot.bin to u-boot-mainline.bin
-	echo "rename /usr/lib/linux-u-boot*/u-boot.bin to u-boot-mainline.bin"
-	mv -f /usr/lib/linux-u-boot*/u-boot.bin /usr/lib/linux-u-boot*/u-boot-mainline.bin
-	# copy /usr/lib/linux-u-boot*/u-boot-mainline.bin to /boot/u-boot.bin
-	echo "copy /usr/lib/linux-u-boot*/u-boot-mainline.bin to /boot/u-boot.bin"
-	cp -af /usr/lib/linux-u-boot*/u-boot-mainline.bin /boot/u-boot.bin
+	# phicomm-n1 use mainline u-boot to overload boot
+	if [[ -f /usr/lib/u-boot/platform_install.sh ]]; then
+		DIR=$(grep "DIR" /usr/lib/u-boot/platform_install.sh | awk -F '=' '{print $2}')
+		echo "u-boot path: $DIR"
+		# rename $DIR/u-boot.bin to u-boot-mainline.bin
+		echo "rename $DIR/u-boot.bin to u-boot-mainline.bin"
+		mv -f $DIR/u-boot.bin $DIR/u-boot-mainline.bin
+		# copy $DIR/u-boot-mainline.bin to /boot/u-boot.bin
+		echo "copy $DIR/u-boot-mainline.bin to /boot/u-boot.bin"
+		cp -af $DIR/u-boot-mainline.bin /boot/u-boot.bin
+	fi
 
 	# modify armbian-install for phicomm-n1
 	echo "modify parted SECTOR (800 * 1024 * 1024) / 512"
@@ -44,7 +49,7 @@ Main() {
 	grep "u-boot.bin" /usr/sbin/nand-sata-install
 
 	# modify exclude.txt for phicomm-n1
-	echo "copy /boot for phicomm-n1"
+	echo "include /boot for phicomm-n1"
 	sed -i '/boot/d' /usr/lib/nand-sata-install/exclude.txt
 	cat /usr/lib/nand-sata-install/exclude.txt
 
