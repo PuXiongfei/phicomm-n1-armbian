@@ -28,7 +28,7 @@ on:
       buildDesktopOptions:
         description: "Build Desktop Options"
         required: false
-        default: 'DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="3dsupport,browsers,chat,desktop_tools,editors,email,internet,multimedia,office,programming,remote_desktop"'
+        default: "DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED=\"3dsupport browsers chat desktop_tools editors email internet multimedia office programming remote_desktop\""
       buildOptions:
         description: "Build Options"
         required: false
@@ -105,17 +105,17 @@ jobs:
         id: compile
         run: |
           cd build
-          COMPILE_PARAMS="BOARD=\"${{ github.event.inputs.boards }}\" \
-          BRANCH=\"${{ github.event.inputs.branch }}\" \
-          RELEASE=\"${{ github.event.inputs.release }}\" \
-          KERNEL_ONLY=\"no\" \
-          KERNEL_CONFIGURE=\"no\" \
-          BUILD_MINIMAL=\"${{ github.event.inputs.buildMinimal }}\" \
-          BUILD_DESKTOP=\"${{ github.event.inputs.buildDesktop }}\" \
-          EXPERT=\"yes\" \
-          COMPRESS_OUTPUTIMAGE=\"yes\" \
-          EXTRAWIFI=\"no\" \
-          WIREGUARD=\"no\" \
+          COMPILE_PARAMS="BOARD=${{ github.event.inputs.boards }} \
+          BRANCH=${{ github.event.inputs.branch }} \
+          RELEASE=${{ github.event.inputs.release }} \
+          KERNEL_ONLY=no \
+          KERNEL_CONFIGURE=no \
+          BUILD_MINIMAL=${{ github.event.inputs.buildMinimal }} \
+          BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
+          EXPERT=yes \
+          COMPRESS_OUTPUTIMAGE=yes \
+          EXTRAWIFI=no \
+          WIREGUARD=no \
           DEST_LANG=\"zh_CN.UTF-8\""
           if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildDesktopOptions }}"
