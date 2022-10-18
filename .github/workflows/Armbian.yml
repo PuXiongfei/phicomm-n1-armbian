@@ -25,14 +25,10 @@ on:
         description: "BUILD_DESKTOP"
         required: true
         default: "no"
-      buildDesktopOptions:
-        description: "Build Desktop Options"
-        required: false
-        default: "DESKTOP_ENVIRONMENT=xfce DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED=\"3dsupport browsers chat desktop_tools editors email internet multimedia office programming remote_desktop\""
       buildOptions:
         description: "Build Options"
         required: false
-        default: "DOWNLOAD_MIRROR=china"
+        default: ""
       override:
         description: "override files"
         required: true
@@ -113,13 +109,7 @@ jobs:
           BUILD_MINIMAL=${{ github.event.inputs.buildMinimal }} \
           BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
           EXPERT=yes \
-          COMPRESS_OUTPUTIMAGE=yes \
-          EXTRAWIFI=no \
-          WIREGUARD=no \
-          DEST_LANG=\"zh_CN.UTF-8\""
-          if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
-            COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildDesktopOptions }}"
-          fi
+          COMPRESS_OUTPUTIMAGE=yes"
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
           fi
