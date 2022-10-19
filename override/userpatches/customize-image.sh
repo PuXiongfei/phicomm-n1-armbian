@@ -48,11 +48,6 @@ Main() {
 	sed -i '/^emmccheck=.*/a\[[ -n $emmccheck ]] && dd if=$emmccheck of=$DIR/u-boot.bin bs=1M count=4 conv=fsync >/dev/null 2>&1\n[[ -f $DIR/u-boot.bin ]] && echo "bootloader backup $DIR/u-boot.bin"' /usr/sbin/nand-sata-install
 	grep "u-boot.bin" /usr/sbin/nand-sata-install
 
-	# modify exclude.txt for phicomm-n1
-	echo "include /boot for phicomm-n1"
-	sed -i '/boot/d' /usr/lib/nand-sata-install/exclude.txt
-	cat /usr/lib/nand-sata-install/exclude.txt
-
 	# install docker
 	echo "install docker"
 	curl -fsSL https://get.docker.com | sh -
