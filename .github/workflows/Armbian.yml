@@ -89,6 +89,14 @@ jobs:
               fi
             done
           fi
+          if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
+            cat >> build/config/boards/phicomm-n1.conf <<EOF
+            DESKTOP_ENVIRONMENT="xfce"
+            DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base"
+            DESKTOP_APPGROUPS_SELECTED="3dsupport office remote_desktop"
+            EOF
+            cat build/config/boards/phicomm-n1.conf
+          fi
           echo "git diff meson64_common.inc meson64.conf start"
           git diff build/config/sources/families/include/meson64_common.inc build/userpatches/sources/families/meson64.conf
           echo "git diff meson64_common.inc meson64.conf end"
