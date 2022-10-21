@@ -19,7 +19,7 @@ setenv devnum 1
 setenv devtype "mmc"
 setenv prefix "/boot/"
 
-if test -e usb 0 /u-boot.bin; then
+if usb start; then
     setenv devnum 0
     setenv devtype "usb"
     setenv prefix "/"

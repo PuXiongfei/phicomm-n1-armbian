@@ -10,7 +10,7 @@ setenv devtype "mmc"
 setenv loader "ext4load"
 setenv prefix "/boot/"
 
-if test -e usb 0 /u-boot.bin; then
+if usb start; then
     setenv devnum 0
     setenv devtype "usb"
     setenv loader "fatload"
