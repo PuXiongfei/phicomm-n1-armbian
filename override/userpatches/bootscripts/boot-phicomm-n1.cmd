@@ -15,19 +15,28 @@ setenv bootlogo "false"
 setenv rootfstype "ext4"
 setenv docker_optimizations "on"
 
-setenv devnum 1
 setenv devtype "mmc"
+setenv devnum 1
 setenv prefix "/boot/"
 
-if usb start; then
-    setenv devnum 0
+if test -e usb 0 ${prefix}armbianEnv.txt; then
+    echo "found usb 0 ${prefix}armbianEnv.txt"
     setenv devtype "usb"
-    setenv prefix "/"
+    setenv devnum 0
+else
+    if test -e usb 0 /armbianEnv.txt; then
+        echo "found usb 0 /armbianEnv.txt"
+        setenv devtype "usb"
+        setenv devnum 0
+        setenv prefix "/"
+    else
+        echo "No USB boot device"
+    fi
 fi
 
-echo "devnum: ${devnum}"
 echo "devtype: ${devtype}"
-echo "Current prefix: ${prefix}"
+echo "devnum: ${devnum}"
+echo "prefix: ${prefix}"
 
 # Show what uboot default fdtfile is
 echo "U-boot default fdtfile: ${fdtfile}"
