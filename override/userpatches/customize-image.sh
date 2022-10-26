@@ -36,7 +36,7 @@ Main() {
 	grep "FIRSTSECTOR=" /usr/sbin/armbian-install
 
 	echo "add backup bootloader when armbian-install for phicomm-n1"
-	sed -i '/^emmccheck=.*/a\[[ -n $emmccheck ]] && dd if=$emmccheck of=$DIR/u-boot.bin bs=1M count=4 conv=fsync >/dev/null 2>&1\n[[ -f $DIR/u-boot.bin ]] && echo "bootloader backup $DIR/u-boot.bin"' /usr/sbin/armbian-install
+	sed -i '/^emmccheck=.*/a\[[ -n $emmccheck ]] && dd if=$emmccheck of=$DIR/u-boot.bin bs=1M count=4 conv=fsync >/dev/null 2>&1\n[[ -f $DIR/u-boot.bin ]] && echo "bootloader backup $DIR/u-boot.bin" >> $logfile' /usr/sbin/armbian-install
 	grep "u-boot.bin" /usr/sbin/armbian-install
 
 	# modify nand-sata-install for phicomm-n1
@@ -45,7 +45,7 @@ Main() {
 	grep "FIRSTSECTOR=" /usr/sbin/nand-sata-install
 
 	echo "add backup bootloader when nand-sata-install for phicomm-n1"
-	sed -i '/^emmccheck=.*/a\[[ -n $emmccheck ]] && dd if=$emmccheck of=$DIR/u-boot.bin bs=1M count=4 conv=fsync >/dev/null 2>&1\n[[ -f $DIR/u-boot.bin ]] && echo "bootloader backup $DIR/u-boot.bin"' /usr/sbin/nand-sata-install
+	sed -i '/^emmccheck=.*/a\[[ -n $emmccheck ]] && dd if=$emmccheck of=$DIR/u-boot.bin bs=1M count=4 conv=fsync >/dev/null 2>&1\n[[ -f $DIR/u-boot.bin ]] && echo "bootloader backup $DIR/u-boot.bin" >> $logfile' /usr/sbin/nand-sata-install
 	grep "u-boot.bin" /usr/sbin/nand-sata-install
 
 	# install docker
