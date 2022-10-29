@@ -18,6 +18,48 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	# X11 config file in meson64_common.inc
+	cat <<-EOF >$SDCARD/etc/X11/xorg.conf.d/02-driver.conf
+		Section "OutputClass"
+		    Identifier "Amlogic"
+		    MatchDriver "meson"
+		    Driver "modesetting"
+		    Option "PrimaryGPU" "true"
+		EndSection
+		Section "Screen"
+		    Identifier      "Default Screen"
+		    Device          "Meson"
+		    Monitor         "foo"
+		    DefaultDepth  24
+		    SubSection "Display"
+		       Depth    24
+		       Modes    "1920x1080" "1440x900" "1280x720" "1280x1024" "1280x960" "1024x768" "800x600" "640x480" "720x400"
+		    EndSubSection
+		EndSection
+	EOF
+
+	cat <<-EOF >$SDCARD/etc/X11/xorg.conf
+		Section "Device"
+		    Identifier  "DRM Graphics Acclerated"
+
+		    ## Use modesetting and glamor
+		        Driver      "modesetting"
+		        Option      "AccelMethod"    "glamor"     ### "glamor" to enable 3D acceleration, "none" to disable.
+		        Option      "DRI"            "2"
+		        Option      "Dri2Vsync"      "true"
+		        Option      "TripleBuffer"   "True"
+		    ## End glamor configuration
+
+		    EndSection
+
+		    Section "Screen"
+		        Identifier "Default Screen"
+		            SubSection "Display"
+		                Depth 24
+		            EndSubSection
+		        EndSection
+	EOF
+
 	# copy some file for phicomm-n1
 	mkimage -C none -A arm -T script -d /tmp/overlay/boot-env_default.cmd $SDCARD/boot/aml_env_default
 	mkimage -C none -A arm -T script -d /tmp/overlay/boot-aml_autoscript.cmd $SDCARD/boot/aml_autoscript
