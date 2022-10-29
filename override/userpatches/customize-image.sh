@@ -18,6 +18,25 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	# copy some file for phicomm-n1
+	mkimage -C none -A arm -T script -d /tmp/overlay/boot-env_default.cmd $SDCARD/boot/aml_env_default
+	mkimage -C none -A arm -T script -d /tmp/overlay/boot-aml_autoscript.cmd $SDCARD/boot/aml_autoscript
+	mkimage -C none -A arm -T script -d /tmp/overlay/boot-emmc_autoscript.cmd $SDCARD/boot/emmc_autoscript
+	mkimage -C none -A arm -T script -d /tmp/overlay/boot-s905_autoscript.cmd $SDCARD/boot/s905_autoscript
+
+	install -m 664 /tmp/overlay/BCM4345C0.hcd $SDCARD/usr/lib/firmware/BCM4345C0.hcd
+	install -m 664 /tmp/overlay/BCM4345C0.hcd $SDCARD/usr/lib/firmware/brcm/BCM4345C0.hcd
+	install -m 664 /tmp/overlay/cyfmac43455-sdio-standard.bin $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.bin
+	install -m 664 /tmp/overlay/cyfmac43455-sdio-standard.bin $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.bin
+	install -m 664 /tmp/overlay/cyfmac43455-sdio.clm_blob $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.clm_blob
+	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.txt
+	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt
+
+	# install -m 664 /tmp/overlay/regulatory.db $SDCARD/usr/lib/firmware/regulatory.db-debian
+	# install -m 664 /tmp/overlay/regulatory.db.p7s $SDCARD/usr/lib/firmware/regulatory.db.p7s-debian
+
+	install -m 755 /tmp/overlay/fixwlanmac.sh $SDCARD/root/fixwlanmac.sh
+
 	# phicomm-n1 use mainline u-boot to overload boot
 	if [[ -f /usr/lib/u-boot/platform_install.sh ]]; then
 		DIR=$(grep "DIR" /usr/lib/u-boot/platform_install.sh | awk -F '=' '{print $2}')
@@ -67,6 +86,16 @@ Main() {
 	# install docker
 	echo "install docker"
 	curl -fsSL https://get.docker.com | sh -
+
+	# install some package
+	if [[ $BUILD_DESKTOP == "yes" ]]; then
+		echo "install some package"
+		apt install -y language-pack-zh-hans language-pack-gnome-zh-hans \
+			fonts-noto-cjk fonts-noto-cjk-extra fonts-arphic-uming fonts-arphic-ukai \
+			fcitx5 fcitx5-rime fcitx5-frontend-* \
+			chromium-browser chromium-browser-l10n firefox-esr firefox-esr-locale-zh-hans \
+			libreoffice-l10n-zh-cn libreoffice-help-zh-cn
+	fi
 
 } # Main
 

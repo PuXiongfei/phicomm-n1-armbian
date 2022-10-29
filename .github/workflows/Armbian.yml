@@ -91,7 +91,7 @@ jobs:
           fi
           if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
             cat >> build/config/boards/phicomm-n1.conf <<EOF
-            DESKTOP_ENVIRONMENT="xfce"
+            DESKTOP_ENVIRONMENT="gnome"
             DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base"
             DESKTOP_APPGROUPS_SELECTED="3dsupport office remote_desktop"
             EOF
