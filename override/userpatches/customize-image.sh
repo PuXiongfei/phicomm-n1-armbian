@@ -66,7 +66,6 @@ Main() {
 	mkimage -C none -A arm -T script -d /tmp/overlay/boot-emmc_autoscript.cmd $SDCARD/boot/emmc_autoscript
 	mkimage -C none -A arm -T script -d /tmp/overlay/boot-s905_autoscript.cmd $SDCARD/boot/s905_autoscript
 
-	install -m 664 /tmp/overlay/BCM4345C0.hcd $SDCARD/usr/lib/firmware/BCM4345C0.hcd
 	install -m 664 /tmp/overlay/BCM4345C0.hcd $SDCARD/usr/lib/firmware/brcm/BCM4345C0.hcd
 	install -m 664 /tmp/overlay/cyfmac43455-sdio-standard.bin $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.bin
 	install -m 664 /tmp/overlay/cyfmac43455-sdio-standard.bin $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.bin
