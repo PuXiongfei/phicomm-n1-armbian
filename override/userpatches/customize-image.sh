@@ -73,8 +73,10 @@ Main() {
 	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.txt
 	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt
 
-	# install -m 664 /tmp/overlay/regulatory.db $SDCARD/usr/lib/firmware/regulatory.db-debian
-	# install -m 664 /tmp/overlay/regulatory.db.p7s $SDCARD/usr/lib/firmware/regulatory.db.p7s-debian
+	if [[ $RELEASE == "bullseye" ]]; then
+		install -m 664 /tmp/overlay/regulatory.db $SDCARD/usr/lib/firmware/regulatory.db-debian
+		install -m 664 /tmp/overlay/regulatory.db.p7s $SDCARD/usr/lib/firmware/regulatory.db.p7s-debian
+	fi
 
 	install -m 755 /tmp/overlay/fixwlanmac.sh $SDCARD/root/fixwlanmac.sh
 
