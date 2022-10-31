@@ -19,19 +19,23 @@ setenv devtype "mmc"
 setenv devnum 1
 setenv prefix "/boot/"
 
-if test -e usb 0 ${prefix}armbianEnv.txt; then
-    echo "found usb 0 ${prefix}armbianEnv.txt"
-    setenv devtype "usb"
-    setenv devnum 0
-else
-    if test -e usb 0 /armbianEnv.txt; then
-        echo "found usb 0 /armbianEnv.txt"
+if usb start; then
+    if test -e usb 0 ${prefix}u-boot.bin; then
+        echo "found usb 0 ${prefix}u-boot.bin"
         setenv devtype "usb"
         setenv devnum 0
-        setenv prefix "/"
     else
-        echo "No USB boot device"
+        if test -e usb 0 /u-boot.bin; then
+            echo "found usb 0 /u-boot.bin"
+            setenv devtype "usb"
+            setenv devnum 0
+            setenv prefix "/"
+        else
+            echo "Not found u-boot.bin"
+        fi
     fi
+else
+    echo "No USB boot device"
 fi
 
 echo "devtype: ${devtype}"
