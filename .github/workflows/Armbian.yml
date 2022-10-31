@@ -73,8 +73,6 @@ jobs:
         run: |
           echo "$(date +"%Y.%m.%d")-PuXiongfei" > build/VERSION
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
-            mkdir -p override/userpatches/u-boot/u-boot-meson64
-            wget -O override/userpatches/u-boot/u-boot-meson64/zzz-phicomm-n1-u-boot.patch https://raw.githubusercontent.com/PuXiongfei/phicomm-n1-u-boot/main/patch/phicomm-n1-u-boot.patch
             echo "Copy override files..."
             cp -af override/* build/
           fi
@@ -91,15 +89,12 @@ jobs:
           fi
           if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
             cat >> build/config/boards/phicomm-n1.conf <<EOF
-            DESKTOP_ENVIRONMENT="gnome"
+            DESKTOP_ENVIRONMENT="xfce"
             DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base"
             DESKTOP_APPGROUPS_SELECTED="3dsupport office remote_desktop"
             EOF
             cat build/config/boards/phicomm-n1.conf
           fi
-          echo "git diff meson64_common.inc meson64.conf start"
-          git diff build/config/sources/families/include/meson64_common.inc build/userpatches/sources/families/meson64.conf
-          echo "git diff meson64_common.inc meson64.conf end"
           echo "git diff boot-meson64.cmd boot-phicomm-n1.cmd start"
           git diff build/config/bootscripts/boot-meson64.cmd build/userpatches/bootscripts/boot-phicomm-n1.cmd
           echo "git diff boot-meson64.cmd boot-phicomm-n1.cmd end"
