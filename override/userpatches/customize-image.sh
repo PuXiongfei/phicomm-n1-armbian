@@ -148,7 +148,7 @@ Main() {
 		jammy)
 			echo "install jammy package"
 			apt install -y \
-				language-pack-zh-hans \
+				language-pack-zh-hans language-pack-gnome-zh-hans
 			;;
 		bullseye)
 			echo "install bullseye package"
