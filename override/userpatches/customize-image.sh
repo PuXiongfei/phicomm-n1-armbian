@@ -96,7 +96,7 @@ Main() {
 	echo "modify parted SECTOR 800M( (800 * 1024 * 1024) / 512 = 1638400 ) to 100%"
 	sed -i 's/FIRSTSECTOR=.*/FIRSTSECTOR=1638400/' /usr/sbin/armbian-install
 	grep "FIRSTSECTOR=" /usr/sbin/armbian-install
-	sed -i "/\t\tLASTSECTOR=/a\        [[ \$BOARD_NAME == \"phicomm-n1\" ]] && LASTSECTOR=\$(parted \$1 unit s print -sm | awk -F \":\" -v pattern=\"\$1\" '\$0 ~ pattern {print \$2}') && echo \"LASTSECTOR=\$LASTSECTOR\" >> \$logfile" /usr/sbin/armbian-install
+	sed -i "/\t\tLASTSECTOR=/a\        [[ \$BOARD_NAME == \"phicomm-n1\" ]] && LASTSECTOR=\$(parted \$1 unit s print -sm | awk -F \":\" -v pattern=\"\$1\" '\$0 ~ pattern {printf (\"%d\", \$2)}') && echo \"LASTSECTOR=\$LASTSECTOR\" >> \$logfile" /usr/sbin/armbian-install
 	grep "LASTSECTOR=" /usr/sbin/armbian-install
 
 	echo "add backup bootloader when armbian-install"
@@ -115,7 +115,7 @@ Main() {
 	echo "modify parted SECTOR 800M( (800 * 1024 * 1024) / 512 = 1638400 ) to 100%"
 	sed -i 's/FIRSTSECTOR=.*/FIRSTSECTOR=1638400/' /usr/sbin/nand-sata-install
 	grep "FIRSTSECTOR=" /usr/sbin/nand-sata-install
-	sed -i "/\t\tLASTSECTOR=/a\        [[ \$BOARD_NAME == \"phicomm-n1\" ]] && LASTSECTOR=\$(parted \$1 unit s print -sm | awk -F \":\" -v pattern=\"\$1\" '\$0 ~ pattern {print \$2}') && echo \"LASTSECTOR=\$LASTSECTOR\" >> \$logfile" /usr/sbin/nand-sata-install
+	sed -i "/\t\tLASTSECTOR=/a\        [[ \$BOARD_NAME == \"phicomm-n1\" ]] && LASTSECTOR=\$(parted \$1 unit s print -sm | awk -F \":\" -v pattern=\"\$1\" '\$0 ~ pattern {printf (\"%d\", \$2)}') && echo \"LASTSECTOR=\$LASTSECTOR\" >> \$logfile" /usr/sbin/nand-sata-install
 	grep "LASTSECTOR=" /usr/sbin/nand-sata-install
 
 	echo "add backup bootloader when nand-sata-install"
