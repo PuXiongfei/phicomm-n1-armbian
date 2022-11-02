@@ -1,6 +1,6 @@
 # By PuXiongfei
 
-name: Build phicomm-n1-bullseye-kde-plasma
+name: Build phicomm-n1-jammy-xfce
 
 on:
   workflow_dispatch:
@@ -76,7 +76,7 @@ jobs:
         id: compile
         run: |
           cd build
-          COMPILE_PARAMS="phicomm-n1-bullseye-kde-plasma"
+          COMPILE_PARAMS="phicomm-n1-jammy-xfce"
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
           fi
