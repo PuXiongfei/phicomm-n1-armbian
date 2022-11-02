@@ -1,34 +1,14 @@
 # By PuXiongfei
 
-name: Build Armbian
+name: Build phicomm-n1-bullseye-cli
 
 on:
   workflow_dispatch:
     inputs:
-      boards:
-        description: "BOARD"
-        required: true
-        default: "phicomm-n1"
-      branch:
-        description: "BRANCH"
-        required: true
-        default: "current"
-      release:
-        description: "RELEASE"
-        required: true
-        default: "bullseye"
-      buildMinimal:
-        description: "BUILD_MINIMAL"
-        required: true
-        default: "no"
-      buildDesktop:
-        description: "BUILD_DESKTOP"
-        required: true
-        default: "no"
       buildOptions:
         description: "Build Options"
         required: false
-        default: ""
+        default: "COMPRESS_OUTPUTIMAGE=yes"
       override:
         description: "override files"
         required: true
@@ -87,14 +67,6 @@ jobs:
               fi
             done
           fi
-          if [[ "${{ github.event.inputs.buildDesktop }}" == "yes" ]]; then
-            cat >> build/config/boards/phicomm-n1.conf <<EOF
-            DESKTOP_ENVIRONMENT="xfce"
-            DESKTOP_ENVIRONMENT_CONFIG_NAME="config_base"
-            DESKTOP_APPGROUPS_SELECTED="3dsupport office remote_desktop"
-            EOF
-            cat build/config/boards/phicomm-n1.conf
-          fi
           echo "git diff boot-meson64.cmd boot-phicomm-n1.cmd start"
           git diff build/config/bootscripts/boot-meson64.cmd build/userpatches/bootscripts/boot-phicomm-n1.cmd
           echo "git diff boot-meson64.cmd boot-phicomm-n1.cmd end"
@@ -104,15 +76,7 @@ jobs:
         id: compile
         run: |
           cd build
-          COMPILE_PARAMS="BOARD=${{ github.event.inputs.boards }} \
-          BRANCH=${{ github.event.inputs.branch }} \
-          RELEASE=${{ github.event.inputs.release }} \
-          KERNEL_ONLY=no \
-          KERNEL_CONFIGURE=no \
-          BUILD_MINIMAL=${{ github.event.inputs.buildMinimal }} \
-          BUILD_DESKTOP=${{ github.event.inputs.buildDesktop }} \
-          EXPERT=yes \
-          COMPRESS_OUTPUTIMAGE=yes"
+          COMPILE_PARAMS="phicomm-n1-bullseye-cli"
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
           fi
@@ -134,7 +98,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{ steps.organize.outputs.status == 'success' && !cancelled() }}
         with:
-          name: Armbian_${{ github.event.inputs.boards }}_${{ github.event.inputs.release }}_${{ env.FILE_DATE }}
+          name: Armbian_phicomm-n1-bullseye-cli_${{ env.FILE_DATE }}
           path: ${{ env.UPLOAD_PATH }}
 
       - name: Delete workflow runs

@@ -141,14 +141,15 @@ Main() {
 			fonts-wqy-microhei fonts-wqy-zenhei \
 			fonts-arphic-ukai fonts-arphic-uming \
 			fonts-noto-cjk fonts-noto-cjk-extra \
-			chromium-browser chromium-browser-l10n \
+			firefox-esr firefox-esr-locale-zh-hans \
 			libreoffice-l10n-zh-cn libreoffice-help-zh-cn
 
 		case $RELEASE in
 		jammy)
 			echo "install jammy package"
 			apt install -y \
-				language-pack-zh-hans language-pack-gnome-zh-hans
+				language-pack-zh-hans language-pack-gnome-zh-hans \
+				fcitx5 fcitx5-rime
 			;;
 		bullseye)
 			echo "install bullseye package"
