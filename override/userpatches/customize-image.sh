@@ -31,10 +31,7 @@ Main() {
 	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.txt
 	install -m 664 /tmp/overlay/brcmfmac43455-sdio.txt $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.phicomm,n1.txt
 
-	if [[ $RELEASE == "bullseye" ]]; then
-		install -m 664 /tmp/overlay/regulatory.db $SDCARD/usr/lib/firmware/regulatory.db-debian
-		install -m 664 /tmp/overlay/regulatory.db.p7s $SDCARD/usr/lib/firmware/regulatory.db.p7s-debian
-	fi
+	install -m 664 /tmp/overlay/02-driver.conf $SDCARD/etc/X11/xorg.conf.d/02-driver.conf
 
 	install -m 755 /tmp/overlay/fixwlanmac.sh $SDCARD/root/fixwlanmac.sh
 
@@ -87,33 +84,6 @@ Main() {
 	echo "set parted mklabel msdos if empty"
 	sed -i '/\tPART_TABLE_TYPE=/a\    [[ -z $PART_TABLE_TYPE && $BOARD_NAME == "phicomm-n1" ]] && PART_TABLE_TYPE="msdos" && echo "PART_TABLE_TYPE=$PART_TABLE_TYPE" >> $logfile' /usr/sbin/nand-sata-install
 	grep "PART_TABLE_TYPE=" /usr/sbin/nand-sata-install
-
-	# install docker
-	echo "install docker"
-	curl -fsSL https://get.docker.com | sh -
-
-	# install some package
-	if [[ $BUILD_DESKTOP == "yes" ]]; then
-		echo "install some package"
-		apt install -y \
-			fonts-wqy-microhei fonts-wqy-zenhei \
-			fonts-arphic-ukai fonts-arphic-uming \
-			fonts-noto-cjk fonts-noto-cjk-extra \
-			firefox-esr firefox-esr-locale-zh-hans \
-			libreoffice-l10n-zh-cn libreoffice-help-zh-cn
-
-		case $RELEASE in
-		jammy)
-			echo "install jammy package"
-			apt install -y \
-				language-pack-zh-hans language-pack-gnome-zh-hans \
-				fcitx5 fcitx5-rime
-			;;
-		bullseye)
-			echo "install bullseye package"
-			;;
-		esac
-	fi
 
 } # Main
 

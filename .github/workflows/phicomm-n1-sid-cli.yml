@@ -1,6 +1,6 @@
 # By PuXiongfei
 
-name: Build phicomm-n1-jammy-gnome
+name: Build phicomm-n1-sid-cli
 
 on:
   workflow_dispatch:
@@ -51,7 +51,6 @@ jobs:
 
       - name: Override file
         run: |
-          echo "$(date +"%Y.%m.%d")-PuXiongfei" > build/VERSION
           if [[ "${{ github.event.inputs.override }}" == "yes" && -d override ]]; then
             echo "Copy override files..."
             cp -af override/* build/
@@ -67,6 +66,7 @@ jobs:
               fi
             done
           fi
+          echo "$(date +"%Y.%m")-PuXiongfei" > build/userpatches/VERSION
           echo "git diff config/bootscripts/boot-meson64.cmd userpatches/bootscripts/boot-meson64.cmd start"
           git diff build/config/bootscripts/boot-meson64.cmd build/userpatches/bootscripts/boot-meson64.cmd
           echo "git diff config/bootscripts/boot-meson64.cmd userpatches/bootscripts/boot-meson64.cmd end"
@@ -76,7 +76,7 @@ jobs:
         id: compile
         run: |
           cd build
-          COMPILE_PARAMS="phicomm-n1-jammy-gnome"
+          COMPILE_PARAMS="phicomm-n1-sid-cli"
           if [[ -n "${{ github.event.inputs.buildOptions }}" ]]; then
             COMPILE_PARAMS="${COMPILE_PARAMS} ${{ github.event.inputs.buildOptions }}"
           fi
