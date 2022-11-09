@@ -1,25 +1,37 @@
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index a7e0d9f6c0..6ae4b91e7d 100644
+index 965895bc2a..c62008245e 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
-@@ -181,6 +181,7 @@ dtb-$(CONFIG_ARCH_MESON) += \
- 	meson-gxbb-nanopi-k2.dtb \
- 	meson-gxbb-p200.dtb \
+@@ -183,6 +183,7 @@ dtb-$(CONFIG_ARCH_MESON) += \
  	meson-gxbb-p201.dtb \
-+	meson-gxl-s905d-phicomm-n1.dtb \
  	meson-gxl-s805x-libretech-ac.dtb \
  	meson-gxl-s905d-libretech-pc.dtb \
++	meson-gxl-s905d-phicomm-n1.dtb \
  	meson-gxl-s905w-jethome-jethub-j80.dtb \
-diff --git a/arch/arm/dts/meson-gxl-s905d-p230.dts b/arch/arm/dts/meson-gxl-s905d-p230.dts
+ 	meson-gxl-s905x-khadas-vim.dtb \
+ 	meson-gxl-s905x-libretech-cc.dtb \
+diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi b/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi
 new file mode 100644
-index 0000000000..f025109f25
+index 0000000000..39270ea71c
 --- /dev/null
-+++ b/arch/arm/dts/meson-gxl-s905d-p230.dts
-@@ -0,0 +1,110 @@
++++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi
+@@ -0,0 +1,7 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Copyright (c) 2016 Endless Computers, Inc.
-+ * Author: Carlo Caione <carlo@endlessm.com>
++ * Copyright (c) 2019 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#include "meson-gxl-u-boot.dtsi"
+diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
+new file mode 100644
+index 0000000000..a8ede84c8a
+--- /dev/null
++++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2018 He Yangxuan
 + */
 +
 +/dts-v1/;
@@ -30,8 +42,22 @@ index 0000000000..f025109f25
 +#include "meson-gx-p23x-q20x.dtsi"
 +
 +/ {
-+	compatible = "amlogic,p230", "amlogic,s905d", "amlogic,meson-gxl";
-+	model = "Amlogic Meson GXL (S905D) P230 Development Board";
++	compatible = "phicomm,n1", "amlogic,s905d", "amlogic,meson-gxl";
++	model = "Phicomm N1";
++
++	cvbs-connector {
++		status = "disabled";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		status {
++			label = "n1:white:status";
++			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
 +
 +	adc-keys {
 +		compatible = "adc-keys";
@@ -48,11 +74,9 @@ index 0000000000..f025109f25
 +
 +	gpio-keys-polled {
 +		compatible = "gpio-keys-polled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
 +		poll-interval = <100>;
 +
-+		button@0 {
++		button {
 +			label = "power";
 +			linux,code = <KEY_POWER>;
 +			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
@@ -69,6 +93,14 @@ index 0000000000..f025109f25
 +			};
 +		};
 +	};
++};
++
++&cvbs_vdac_port {
++	status = "disabled";
++};
++
++&usb {
++	dr_mode = "host";
 +};
 +
 +&cec_AO {
@@ -104,6 +136,7 @@ index 0000000000..f025109f25
 +		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
 +
 +		interrupt-parent = <&gpio_intc>;
++		/* MAC_INTR on GPIOZ_15 */
 +		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
 +	};
 +};
@@ -126,97 +159,9 @@ index 0000000000..f025109f25
 +		compatible = "brcm,bcm4329-fmac";
 +	};
 +};
-diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi b/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi
-new file mode 100644
-index 0000000000..39270ea71c
---- /dev/null
-+++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1-u-boot.dtsi
-@@ -0,0 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+#include "meson-gxl-u-boot.dtsi"
-diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
-new file mode 100644
-index 0000000000..b218a04216
---- /dev/null
-+++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 He Yangxuan
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-gxl-s905d-p230.dts"
-+
-+/ {
-+	compatible = "phicomm,n1", "amlogic,s905d", "amlogic,meson-gxl";
-+	model = "Phicomm N1";
-+
-+	cvbs-connector {
-+		status = "disabled";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		status {
-+			label = "n1:white:status";
-+			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+	};
-+
-+	dc_in: regulator-vcc_12v {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VCC_12V";
-+			regulator-min-microvolt = <12000000>;
-+			regulator-max-microvolt = <12000000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+	};
-+
-+	vddgpu: regulator-vddgpu {
-+			compatible = "regulator-fixed";
-+			regulator-name = "mali";
-+			regulator-min-microvolt = <950000>;
-+			regulator-max-microvolt = <950000>;
-+			vin-supply = <&dc_in>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+	};
-+};
-+
-+&cvbs_vdac_port {
-+	status = "disabled";
-+};
-+
-+&usb {
-+	dr_mode = "host";
-+};
-+
-+&sd_emmc_a {
-+	max-frequency = <100000000>;
-+	sd-uhs-sdr50;
-+	//max-frequency = <200000000>;
-+	//sd-uhs-sdr104;
-+	//max-frequency = <50000000>;
-+	//sd-uhs-ddr50;
-+};
 +
 +&sd_emmc_b {
 +	status = "disabled";
-+};
-+
-+&ethmac {
-+	snps,aal;
-+	snps,txpbl = <0x8>;
-+	snps,rxpbl = <0x8>;
 +};
 +
 +&uart_A {
@@ -234,20 +179,20 @@ index 0000000000..b218a04216
 +	};
 +};
 diff --git a/board/amlogic/q200/MAINTAINERS b/board/amlogic/q200/MAINTAINERS
-index ba7c12b2c1..89de6f9ed2 100644
+index 9c84cca27e..85db6b7071 100644
 --- a/board/amlogic/q200/MAINTAINERS
 +++ b/board/amlogic/q200/MAINTAINERS
-@@ -4,6 +4,7 @@ S:	Maintained
- L:	u-boot-amlogic@groups.io
- F:	board/amlogic/q200/
- F:	include/configs/q200.h
-+F:	configs/phicomm-n1_defconfig
+@@ -7,6 +7,7 @@ F:	include/configs/q200.h
  F:	configs/khadas-vim2_defconfig
  F:	configs/libretech-s905d-pc_defconfig
  F:	configs/libretech-s912-pc_defconfig
++F:	configs/phicomm-n1_defconfig
+ F:	configs/wetek-core2_defconfig
+ F:	doc/board/amlogic/khadas-vim2.rst
+ F:	doc/board/amlogic/wetek-core2.rst
 diff --git a/configs/phicomm-n1_defconfig b/configs/phicomm-n1_defconfig
 new file mode 100644
-index 0000000000..5238371777
+index 0000000000..13631d68b0
 --- /dev/null
 +++ b/configs/phicomm-n1_defconfig
 @@ -0,0 +1,76 @@
@@ -265,11 +210,14 @@ index 0000000000..5238371777
 +CONFIG_IDENT_STRING=" phicomm-n1"
 +CONFIG_SYS_LOAD_ADDR=0x1000000
 +CONFIG_DEBUG_UART=y
++CONFIG_HAS_CUSTOM_SYS_INIT_SP_ADDR=y
++CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0x20000000
 +CONFIG_REMAKE_ELF=y
 +CONFIG_OF_BOARD_SETUP=y
 +CONFIG_USE_PREBOOT=y
 +# CONFIG_DISPLAY_CPUINFO is not set
 +CONFIG_MISC_INIT_R=y
++CONFIG_SYS_MAXARGS=32
 +# CONFIG_CMD_BDI is not set
 +# CONFIG_CMD_IMI is not set
 +CONFIG_CMD_ADC=y
@@ -285,7 +233,6 @@ index 0000000000..5238371777
 +CONFIG_MMC_MESON_GX=y
 +CONFIG_MTD=y
 +CONFIG_PHY_REALTEK=y
-+CONFIG_DM_ETH=y
 +CONFIG_DM_MDIO=y
 +CONFIG_DM_MDIO_MUX=y
 +CONFIG_ETH_DESIGNWARE_MESON8B=y
@@ -324,6 +271,4 @@ index 0000000000..5238371777
 +CONFIG_BMP_24BPP=y
 +CONFIG_BMP_32BPP=y
 +CONFIG_OF_LIBFDT_OVERLAY=y
-+CONFIG_CONSOLE_MUX=y
 +CONFIG_ENV_OVERWRITE=y
-+CONFIG_EFI_LOADER=n
