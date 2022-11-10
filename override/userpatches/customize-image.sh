@@ -19,10 +19,10 @@ BUILD_DESKTOP=$4
 
 Main() {
 	# copy some file for phicomm-n1
-	mkimage -C none -A arm -T script -d /tmp/overlay/boot-env_default.cmd $SDCARD/boot/aml_env_default
-	mkimage -C none -A arm -T script -d /tmp/overlay/boot-aml_autoscript.cmd $SDCARD/boot/aml_autoscript
-	mkimage -C none -A arm -T script -d /tmp/overlay/boot-emmc_autoscript.cmd $SDCARD/boot/emmc_autoscript
-	mkimage -C none -A arm -T script -d /tmp/overlay/boot-s905_autoscript.cmd $SDCARD/boot/s905_autoscript
+	mkimage -C none -A arm -T script -d /tmp/overlay/env_default.txt $SDCARD/boot/aml_env_default
+	mkimage -C none -A arm -T script -d /tmp/overlay/aml_autoscript.txt $SDCARD/boot/aml_autoscript
+	mkimage -C none -A arm -T script -d /tmp/overlay/emmc_autoscript.txt $SDCARD/boot/emmc_autoscript
+	mkimage -C none -A arm -T script -d /tmp/overlay/s905_autoscript.txt $SDCARD/boot/s905_autoscript
 
 	install -m 664 /tmp/overlay/BCM4345C0.hcd $SDCARD/usr/lib/firmware/brcm/BCM4345C0.hcd
 	install -m 664 /tmp/overlay/cyfmac43455-sdio-standard.bin $SDCARD/usr/lib/firmware/brcm/brcmfmac43455-sdio.bin
