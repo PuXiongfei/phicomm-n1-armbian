@@ -272,3 +272,19 @@ index 0000000000..13631d68b0
 +CONFIG_BMP_32BPP=y
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_ENV_OVERWRITE=y
+diff --git a/include/configs/meson64.h b/include/configs/meson64.h
+index 40803ee9da..f1ca38fbeb 100644
+--- a/include/configs/meson64.h
++++ b/include/configs/meson64.h
+@@ -64,10 +64,10 @@
+ #ifndef BOOT_TARGET_DEVICES
+ #define BOOT_TARGET_DEVICES(func) \
+ 	func(ROMUSB, romusb, na)  \
++	BOOT_TARGET_DEVICES_USB(func) \
+ 	func(MMC, mmc, 0) \
+ 	func(MMC, mmc, 1) \
+ 	func(MMC, mmc, 2) \
+-	BOOT_TARGET_DEVICES_USB(func) \
+ 	BOOT_TARGET_NVME(func) \
+ 	BOOT_TARGET_SCSI(func) \
+ 	func(PXE, pxe, na) \
