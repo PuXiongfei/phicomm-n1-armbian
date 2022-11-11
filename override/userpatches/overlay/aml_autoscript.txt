@@ -2,14 +2,15 @@ env default -a
 setenv boot_loadtypes 'fatload ext4load'
 setenv boot_prefixes '/ /boot/'
 setenv boot_targets 'usb0 mmc1'
-setenv bootcmd 'run distro_bootcmd; run storeboot'
+setenv bootcmd 'run env_defaultcmd; run distro_bootcmd; run storeboot'
+setenv env_defaultcmd 'if usb start 0; then if fatload usb 0 ${loadaddr} env_default; then autoscr ${loadaddr}; fi; fi'
 setenv distro_bootcmd 'for target in ${boot_targets}; do run bootcmd_${target}; done'
 setenv bootcmd_usb0 'devnum=0; run usb_boot'
 setenv bootcmd_mmc1 'devnum=1; run mmc_boot'
 setenv usb_boot 'usb start; if usb dev ${devnum}; then devtype=usb; run scan_dev_for_boot; fi'
 setenv mmc_boot 'if mmc dev ${devnum}; then devtype=mmc; run scan_dev_for_boot; fi'
 setenv scan_dev_for_boot 'echo Scanning ${devtype} ${devnum}...; for prefix in ${boot_prefixes}; do run scan_dev_for_mainline; done'
-setenv scan_dev_for_mainline 'for loadtype in ${boot_loadtypes}; do if ${loadtype} ${devtype} ${devnum} 0x1000000 ${prefix}u-boot.bin; then echo Found mainline U-Boot ${prefix}u-boot.bin; go 0x01000000; fi; done'
+setenv scan_dev_for_mainline 'for loadtype in ${boot_loadtypes}; do if ${loadtype} ${devtype} ${devnum} 0x01000000 ${prefix}u-boot.bin; then echo Found mainline U-Boot ${prefix}u-boot.bin; go 0x01000000; fi; done'
 setenv upgrade_step 2
 saveenv
 sleep 1
