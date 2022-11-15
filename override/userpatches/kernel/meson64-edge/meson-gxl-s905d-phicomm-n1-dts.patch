@@ -1,23 +1,32 @@
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-index 9ef210f17b4a..a8ede84c8abe 100644
+index 9ef210f17b4a..488bd6af5631 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-@@ -5,7 +5,10 @@
+@@ -5,7 +5,11 @@
  
  /dts-v1/;
  
 -#include "meson-gxl-s905d-p230.dts"
 +#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
 +
 +#include "meson-gxl-s905d.dtsi"
 +#include "meson-gx-p23x-q20x.dtsi"
  
  / {
  	compatible = "phicomm,n1", "amlogic,s905d", "amlogic,meson-gxl";
-@@ -24,6 +27,41 @@ status {
+@@ -19,9 +23,46 @@ leds {
+ 		compatible = "gpio-leds";
+ 
+ 		status {
+-			label = "n1:white:status";
++			color = <LED_COLOR_ID_WHITE>;
++			function = LED_FUNCTION_POWER;
+ 			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
  			default-state = "on";
- 		};
- 	};
++			panic-indicator;
++		};
++	};
 +
 +	adc-keys {
 +		compatible = "adc-keys";
@@ -51,12 +60,10 @@ index 9ef210f17b4a..a8ede84c8abe 100644
 +			hdmi_connector_in: endpoint {
 +				remote-endpoint = <&hdmi_tx_tmds_out>;
 +			};
-+		};
-+	};
+ 		};
+ 	};
  };
- 
- &cvbs_vdac_port {
-@@ -33,3 +71,79 @@ &cvbs_vdac_port {
+@@ -33,3 +74,91 @@ &cvbs_vdac_port {
  &usb {
  	dr_mode = "host";
  };
@@ -70,7 +77,7 @@ index 9ef210f17b4a..a8ede84c8abe 100644
 +
 +/* P230 has exclusive choice between internal or external PHY */
 +&ethmac {
-+	pinctrl-0 = <&eth_pins>;
++	pinctrl-0 = <&eth_pins>, <&eth_phy_irq_pins>;
 +	pinctrl-names = "default";
 +
 +	/* Select external PHY by default */
@@ -96,6 +103,18 @@ index 9ef210f17b4a..a8ede84c8abe 100644
 +		interrupt-parent = <&gpio_intc>;
 +		/* MAC_INTR on GPIOZ_15 */
 +		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
++&pinctrl_periphs {
++	/* Make sure the phy irq pin is properly configured as input */
++	eth_phy_irq_pins: eth_phy_irq {
++		mux {
++			groups = "GPIOZ_15";
++			function = "gpio_periphs";
++			bias-disable;
++			output-disable;
++		};
 +	};
 +};
 +
