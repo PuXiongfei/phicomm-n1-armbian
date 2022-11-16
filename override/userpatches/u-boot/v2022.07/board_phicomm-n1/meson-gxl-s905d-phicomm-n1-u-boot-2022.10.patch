@@ -25,10 +25,10 @@ index 0000000000..39270ea71c
 +#include "meson-gxl-u-boot.dtsi"
 diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
 new file mode 100644
-index 0000000000..488bd6af56
+index 0000000000..072125f9b6
 --- /dev/null
 +++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,98 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2018 He Yangxuan
@@ -53,47 +53,12 @@ index 0000000000..488bd6af56
 +	leds {
 +		compatible = "gpio-leds";
 +
-+		status {
++		led-0 {
 +			color = <LED_COLOR_ID_WHITE>;
 +			function = LED_FUNCTION_POWER;
 +			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
 +			default-state = "on";
 +			panic-indicator;
-+		};
-+	};
-+
-+	adc-keys {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 0>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1710000>;
-+
-+		button-function {
-+			label = "Update";
-+			linux,code = <KEY_VENDOR>;
-+			press-threshold-microvolt = <10000>;
-+		};
-+	};
-+
-+	gpio-keys-polled {
-+		compatible = "gpio-keys-polled";
-+		poll-interval = <100>;
-+
-+		button {
-+			label = "power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_tmds_out>;
-+			};
 +		};
 +	};
 +};
@@ -106,46 +71,27 @@ index 0000000000..488bd6af56
 +	dr_mode = "host";
 +};
 +
-+&cec_AO {
-+	status = "okay";
-+	pinctrl-0 = <&ao_cec_pins>;
-+	pinctrl-names = "default";
-+	hdmi-phandle = <&hdmi_tx>;
-+};
-+
-+/* P230 has exclusive choice between internal or external PHY */
 +&ethmac {
 +	pinctrl-0 = <&eth_pins>, <&eth_phy_irq_pins>;
 +	pinctrl-names = "default";
-+
-+	/* Select external PHY by default */
 +	phy-handle = <&external_phy>;
-+
 +	amlogic,tx-delay-ns = <2>;
-+
-+	/* External PHY is in RGMII */
 +	phy-mode = "rgmii";
 +};
 +
 +&external_mdio {
 +	external_phy: ethernet-phy@0 {
-+		/* Realtek RTL8211F (0x001cc916) */
 +		reg = <0>;
 +		max-speed = <1000>;
-+
-+		/* External PHY reset is shared with internal PHY Led signal */
 +		reset-assert-us = <10000>;
 +		reset-deassert-us = <80000>;
 +		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
-+
 +		interrupt-parent = <&gpio_intc>;
-+		/* MAC_INTR on GPIOZ_15 */
 +		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
 +	};
 +};
 +
 +&pinctrl_periphs {
-+	/* Make sure the phy irq pin is properly configured as input */
 +	eth_phy_irq_pins: eth_phy_irq {
 +		mux {
 +			groups = "GPIOZ_15";
@@ -153,18 +99,6 @@ index 0000000000..488bd6af56
 +			bias-disable;
 +			output-disable;
 +		};
-+	};
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&hdmi_tx_tmds_port {
-+	hdmi_tx_tmds_out: endpoint {
-+		remote-endpoint = <&hdmi_connector_in>;
 +	};
 +};
 +
