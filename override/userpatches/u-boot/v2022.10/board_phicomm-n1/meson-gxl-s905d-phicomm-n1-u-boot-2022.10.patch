@@ -25,10 +25,10 @@ index 0000000000..39270ea71c
 +#include "meson-gxl-u-boot.dtsi"
 diff --git a/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
 new file mode 100644
-index 0000000000..072125f9b6
+index 0000000000..3713fa7b1e
 --- /dev/null
 +++ b/arch/arm/dts/meson-gxl-s905d-phicomm-n1.dts
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,117 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2018 He Yangxuan
@@ -60,6 +60,25 @@ index 0000000000..072125f9b6
 +			default-state = "on";
 +			panic-indicator;
 +		};
++	};
++
++	dc_in: regulator-vcc_12v {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vddgpu: regulator-vddgpu {
++		compatible = "regulator-fixed";
++		regulator-name = "mali";
++		regulator-min-microvolt = <950000>;
++		regulator-max-microvolt = <950000>;
++		vin-supply = <&dc_in>;
++		regulator-boot-on;
++		regulator-always-on;
 +	};
 +};
 +
