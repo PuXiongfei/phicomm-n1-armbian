@@ -18,6 +18,9 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 Main() {
+	# set localtime Asia/Shanghai
+	ln -sf $SDCARD/usr/share/zoneinfo/Asia/Shanghai $SDCARD/etc/localtime
+
 	# copy some file for phicomm-n1
 	mkimage -C none -A arm -T script -d /tmp/overlay/aml_autoscript.txt $SDCARD/boot/aml_autoscript
 	mkimage -C none -A arm -T script -d /tmp/overlay/env_default.txt $SDCARD/boot/.env_default
